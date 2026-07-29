@@ -144,6 +144,8 @@
         wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false');
       }
     });
+
+    buildNav();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
