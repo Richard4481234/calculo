@@ -85,6 +85,17 @@
   .how .b{color:var(--muted);font-size:13.5px;line-height:1.55}
   .how .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tangent);letter-spacing:.1em}
 
+  /* ---- saved labs ---- */
+  .saved{max-width:1160px;margin:46px auto 0;padding:0 26px}
+  .saved-h{font-family:'Fraunces',Georgia,serif;font-size:20px;margin:0 0 14px;display:flex;align-items:center;gap:9px}
+  .saved-h .st{color:var(--tangent)}
+  .saved-list{display:flex;flex-wrap:wrap;gap:10px}
+  .fav-chip{display:inline-flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:11px;padding:9px 13px;font-size:13.5px;transition:.14s}
+  .fav-chip:hover{border-color:rgba(92,214,176,.5)}
+  .fav-chip .x{color:var(--faint);font-size:16px;cursor:pointer;line-height:1;padding:0 1px}
+  .fav-chip .x:hover{color:var(--area)}
+
   footer{max-width:1160px;margin:64px auto 0;padding:26px;border-top:1px solid var(--line);
     color:var(--faint);font-size:12.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 </style>
@@ -109,6 +120,11 @@
     <p>Calculus is the mathematics of change. Instead of memorizing rules, drag a point, slide a value, and watch the ideas — slope, area, and the limit — unfold in front of you.</p>
     <a class="cta" href="derivative_tangent.html">Open the derivative lab <span aria-hidden="true">→</span></a>
     <span class="note">A growing set of hands-on explorers. No sign-up, nothing to install. &nbsp;·&nbsp; <a href="quiz.html" style="color:var(--accent)">Test yourself with a quick quiz →</a></span>
+  </section>
+
+  <section class="saved" id="saved" hidden>
+    <div class="saved-h"><span class="st">★</span> Your saved labs</div>
+    <div class="saved-list" id="savedList"></div>
   </section>
 
   <section class="grid" id="labs">
@@ -511,5 +527,26 @@
 
   <script src="calculo-switcher.js" defer></script>
   <script type="module" src="calculo-visits.js"></script>
+  <script>
+  (function(){
+    function store(){ try{ return JSON.parse(localStorage.getItem('calculo:favs')||'[]'); }catch(e){ return []; } }
+    function save(a){ try{ localStorage.setItem('calculo:favs', JSON.stringify(a)); }catch(e){} }
+    var sec=document.getElementById('saved'), list=document.getElementById('savedList');
+    function render(){
+      var favs=store();
+      if(!favs.length){ sec.hidden=true; return; }
+      sec.hidden=false; list.innerHTML='';
+      favs.forEach(function(fv){
+        var a=document.createElement('a'); a.className='fav-chip'; a.href=fv.f;
+        var t=document.createElement('span'); t.textContent=fv.t; a.appendChild(t);
+        var x=document.createElement('span'); x.className='x'; x.textContent='×'; x.title='Remove'; x.setAttribute('role','button'); x.setAttribute('aria-label','Remove '+fv.t);
+        x.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation();
+          var cur=store(); for(var i=0;i<cur.length;i++){ if(cur[i].f===fv.f){ cur.splice(i,1); break; } } save(cur); render(); });
+        a.appendChild(x); list.appendChild(a);
+      });
+    }
+    render();
+  })();
+  </script>
 </body>
 </html>

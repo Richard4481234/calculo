@@ -83,6 +83,16 @@
     + "#cxsw .cxsw-embed{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border-radius:9px;"
       + "background:none;border:0;cursor:pointer;color:#eef1fb;font:500 14px 'Inter',system-ui,sans-serif;text-align:left}"
     + "#cxsw .cxsw-embed:hover{background:rgba(140,160,220,.12)}"
+    + "#cxfav{position:fixed;right:18px;bottom:66px;z-index:2147482500;width:44px;height:44px;border-radius:50%;"
+      + "background:rgba(18,22,40,.9);border:1px solid rgba(140,160,220,.28);color:#69739b;cursor:pointer;display:grid;"
+      + "place-items:center;font-size:21px;line-height:1;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);"
+      + "box-shadow:0 8px 26px -10px rgba(0,0,0,.6);transition:.14s}"
+    + "#cxfav:hover{border-color:rgba(255,210,122,.6);color:#ffd27a}"
+    + "#cxfav.on{color:#ffd27a}"
+    + "#cxfav .cxfav-tip{position:absolute;right:52px;white-space:nowrap;background:#141a2e;border:1px solid rgba(140,160,220,.2);"
+      + "border-radius:8px;padding:5px 9px;font:500 12px 'Inter',system-ui,sans-serif;color:#eef1fb;opacity:0;"
+      + "transform:translateX(6px);transition:.15s;pointer-events:none}"
+    + "#cxfav.show-tip .cxfav-tip{opacity:1;transform:translateX(0)}"
     + "@media(max-width:520px){#cxsw .cxsw-btn span.cxsw-txt{display:none}}"
     + "#cxnav{position:fixed;left:18px;bottom:18px;z-index:2147482000;display:flex;gap:8px;font-family:'Inter',system-ui,sans-serif}"
     + "#cxnav a{display:inline-flex;align-items:center;gap:8px;max-width:230px;background:rgba(18,22,40,.9);color:#eef1fb;"
@@ -139,6 +149,36 @@
           case 'PageDown': e.preventDefault(); nudge(-1, true); break;
         }
       });
+    });
+  }
+
+  /* Favorites — saved to localStorage as [{f,t},...] under 'calculo:favs'.
+     Works instantly on one device; the hub reads the same key. */
+  function favStore(){ try{ return JSON.parse(localStorage.getItem('calculo:favs') || '[]'); }catch(e){ return []; } }
+  function favSave(a){ try{ localStorage.setItem('calculo:favs', JSON.stringify(a)); }catch(e){} }
+  function favIndex(list, f){ for(var i=0;i<list.length;i++){ if(list[i].f===f) return i; } return -1; }
+
+  function buildFav(entry){
+    var isFav = favIndex(favStore(), entry.f) >= 0;
+    var b = document.createElement('button');
+    b.id = 'cxfav'; b.type = 'button';
+    b.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+    b.setAttribute('aria-label', isFav ? 'Remove this lab from your saved labs' : 'Save this lab');
+    b.innerHTML = '<span class="cxfav-star">' + (isFav ? '★' : '☆') + '</span><span class="cxfav-tip"></span>';
+    if (isFav) b.classList.add('on');
+    document.body.appendChild(b);
+    var tip = b.querySelector('.cxfav-tip'), star = b.querySelector('.cxfav-star'), tid;
+    b.addEventListener('click', function(){
+      var cur = favStore(), i = favIndex(cur, entry.f), nowFav;
+      if (i >= 0){ cur.splice(i, 1); nowFav = false; }
+      else { cur.push({ f:entry.f, t:entry.t }); nowFav = true; }
+      favSave(cur);
+      b.classList.toggle('on', nowFav);
+      star.textContent = nowFav ? '★' : '☆';
+      b.setAttribute('aria-pressed', nowFav ? 'true' : 'false');
+      b.setAttribute('aria-label', nowFav ? 'Remove this lab from your saved labs' : 'Save this lab');
+      tip.textContent = nowFav ? 'Saved to your labs' : 'Removed';
+      b.classList.add('show-tip'); clearTimeout(tid); tid = setTimeout(function(){ b.classList.remove('show-tip'); }, 1400);
     });
   }
 
@@ -244,6 +284,7 @@
 
     buildNav();
     buildA11y();
+    if (labEntry) buildFav(labEntry);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
