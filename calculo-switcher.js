@@ -77,8 +77,52 @@
     + "#cxnav .cxnav-k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#69739b}"
     + "#cxnav .cxnav-t{font:600 12.5px 'Inter',system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
     + "#cxnav a.nx{text-align:right}"
-    + "@media(max-width:640px){#cxnav .cxnav-tx{display:none}#cxnav a{padding:10px 12px}}";
+    + "@media(max-width:640px){#cxnav .cxnav-tx{display:none}#cxnav a{padding:10px 12px}}"
+    /* accessibility: focusable diagram + reduced-motion guard */
+    + ".graphwrap canvas.cx-focusable{outline:none}"
+    + ".graphwrap canvas.cx-focusable:focus-visible{outline:3px solid rgba(92,214,176,.75);outline-offset:3px;border-radius:8px}"
+    + ".cx-a11yhint{position:absolute;left:12px;bottom:12px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;"
+      + "color:#69739b;background:rgba(10,14,26,.7);border:1px solid rgba(140,160,220,.2);border-radius:7px;padding:4px 8px;"
+      + "opacity:0;transition:opacity .15s;pointer-events:none}"
+    + ".graphwrap canvas.cx-focusable:focus-visible ~ .cx-a11yhint{opacity:1}"
+    + "@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.001ms!important;animation-duration:.001ms!important;"
+      + "animation-iteration-count:1!important;scroll-behavior:auto!important}}";
     document.head.appendChild(s);
+  }
+
+  /* Make each interactive diagram keyboard-operable: focusable, labelled,
+     and arrow keys nudge the primary slider (reusing the lab's own logic). */
+  function buildA11y(){
+    var canvases = document.querySelectorAll('.graphwrap canvas');
+    if (!canvases.length) return;
+    var h1 = document.querySelector('h1');
+    var base = h1 ? h1.textContent.trim() : 'Interactive diagram';
+    var sliders = document.querySelectorAll('.panel input[type=range]');
+    var primary = sliders[0] || document.querySelector('input[type=range]');
+    if (!primary) return;                          // no parameter to nudge
+    function nudge(dir, big){
+      var n = big ? 10 : 1;
+      for (var i = 0; i < n; i++){ dir > 0 ? primary.stepUp() : primary.stepDown(); }
+      primary.dispatchEvent(new Event('input', { bubbles:true }));
+    }
+    Array.prototype.forEach.call(canvases, function(c){
+      c.setAttribute('tabindex', '0');
+      c.setAttribute('role', 'application');
+      c.setAttribute('aria-label', base + ' — interactive diagram. Use the arrow keys to adjust.');
+      c.classList.add('cx-focusable');
+      var hint = document.createElement('div');
+      hint.className = 'cx-a11yhint';
+      hint.textContent = '← → to adjust';
+      if (c.parentNode) c.parentNode.appendChild(hint);
+      c.addEventListener('keydown', function(e){
+        switch (e.key){
+          case 'ArrowRight': case 'ArrowUp':   e.preventDefault(); nudge(1, false); break;
+          case 'ArrowLeft':  case 'ArrowDown': e.preventDefault(); nudge(-1, false); break;
+          case 'PageUp':   e.preventDefault(); nudge(1, true); break;
+          case 'PageDown': e.preventDefault(); nudge(-1, true); break;
+        }
+      });
+    });
   }
 
   function buildNav(){
@@ -146,6 +190,7 @@
     });
 
     buildNav();
+    buildA11y();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
