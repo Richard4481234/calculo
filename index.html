@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Calculo — an interactive lab for seeing calculus. Drag, slide, and watch the ideas of change, area, and limits come alive.">
+<meta name="theme-color" content="#0a0e18">
+<title>Calculo · See calculus move</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.55); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0; --tangent:#ffd27a; --deriv:#b89bff; --area:#ff8a5b;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.10), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(184,155,255,0.08), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  /* ---- top bar ---- */
+  .bar{max-width:1160px;margin:0 auto;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20px;letter-spacing:-.01em}
+  .brand svg{display:block}
+  .bar-links{display:flex;gap:22px;font-size:13.5px;color:var(--muted)}
+  .bar-links a:hover{color:var(--ink)}
+
+  /* ---- hero ---- */
+  .hero{max-width:1160px;margin:0 auto;padding:38px 26px 8px;text-align:center}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+  .hero h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(38px,6.4vw,72px);letter-spacing:-.025em;line-height:1.02;margin:16px 0 0}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero p{color:var(--muted);font-size:clamp(15px,1.7vw,18px);line-height:1.6;max-width:600px;margin:20px auto 0}
+  .hero .cta{display:inline-flex;align-items:center;gap:9px;margin-top:30px;background:var(--accent);color:#062018;
+    font-weight:600;font-size:15px;padding:13px 24px;border-radius:12px;transition:.15s}
+  .hero .cta:hover{transform:translateY(-1px);box-shadow:0 10px 30px -8px rgba(92,214,176,.5)}
+  .hero .note{display:block;margin-top:14px;font-size:12.5px;color:var(--faint)}
+
+  /* ---- topic grid ---- */
+  .grid{max-width:1160px;margin:52px auto 0;padding:0 26px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 20px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:.16s;overflow:hidden;min-height:210px;display:flex;flex-direction:column}
+  .card.live{cursor:pointer}
+  .card.live:hover{transform:translateY(-3px);border-color:rgba(92,214,176,.5)}
+  .card .thumb{height:96px;margin:-4px -6px 14px;border-radius:11px;overflow:hidden;background:rgba(10,14,26,.4)}
+  .card .thumb svg{display:block;width:100%;height:100%}
+  .card h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:19px;margin:0 0 6px;letter-spacing:-.01em}
+  .card p{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0}
+  .card .tag{position:absolute;top:16px;right:16px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;padding:4px 9px;border-radius:99px}
+  .tag.on{background:rgba(92,214,176,.16);color:var(--accent);border:1px solid rgba(92,214,176,.4)}
+  .tag.soon{background:rgba(140,160,220,.1);color:var(--faint);border:1px solid var(--line)}
+  .card.soon{opacity:.62}
+  .card .go{margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+  /* ---- how strip ---- */
+  .how{max-width:1160px;margin:56px auto 0;padding:0 26px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  @media(max-width:720px){.how{grid-template-columns:1fr}}
+  .how .h{font-family:'Fraunces',Georgia,serif;font-size:17px;margin:0 0 7px;color:var(--ink)}
+  .how .b{color:var(--muted);font-size:13.5px;line-height:1.55}
+  .how .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tangent);letter-spacing:.1em}
+
+  footer{max-width:1160px;margin:64px auto 0;padding:26px;border-top:1px solid var(--line);
+    color:var(--faint);font-size:12.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e1424"/><path d="M5 22 C 10 22, 12 8, 17 8 S 24 18, 27 10" fill="none" stroke="#5cd6b0" stroke-width="2"/><circle cx="17" cy="8" r="2.4" fill="#ffd27a"/></svg>
+      Calculo
+    </a>
+    <div class="bar-links">
+      <a href="#labs">Labs</a>
+      <a href="#how">How it works</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <span class="kicker">Interactive Calculus</span>
+    <h1>See calculus <em>move</em>.</h1>
+    <p>Calculus is the mathematics of change. Instead of memorizing rules, drag a point, slide a value, and watch the ideas — slope, area, and the limit — unfold in front of you.</p>
+    <a class="cta" href="derivative_tangent.html">Open the derivative lab <span aria-hidden="true">→</span></a>
+    <span class="note">A growing set of hands-on explorers. No sign-up, nothing to install.</span>
+  </section>
+
+  <section class="grid" id="labs">
+
+    <a class="card live" href="derivative_tangent.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 84 C 60 84, 78 20, 120 20 S 190 74, 232 40" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <line x1="70" y1="86" x2="180" y2="8" stroke="#ffd27a" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
+          <circle cx="120" cy="20" r="4.5" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Derivative &amp; Tangent Line</h3>
+      <p>Slide a point along a curve and watch the tangent's slope trace out the whole derivative f′(x).</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="area_riemann.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 78 C 60 78, 78 26, 120 26 S 190 66, 232 44" fill="none" stroke="#ff8a5b" stroke-width="2.2"/>
+          <g fill="rgba(255,138,91,0.18)" stroke="rgba(255,138,91,0.5)" stroke-width="0.6">
+            <rect x="70" y="52" width="16" height="30"/><rect x="86" y="46" width="16" height="36"/>
+            <rect x="102" y="40" width="16" height="42"/><rect x="118" y="38" width="16" height="44"/>
+            <rect x="134" y="42" width="16" height="40"/><rect x="150" y="48" width="16" height="34"/>
+          </g>
+        </svg>
+      </div>
+      <h3>Area Under the Curve</h3>
+      <p>Add rectangles one by one — Riemann sums — and see them squeeze toward the exact integral.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="limits_continuity.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 88 C 70 88, 96 12, 120 12 C 144 12, 170 88, 232 88" fill="none" stroke="#b89bff" stroke-width="2.2"/>
+          <line x1="120" y1="4" x2="120" y2="92" stroke="rgba(184,155,255,0.4)" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="98" cy="30" r="3.4" fill="#b89bff"/><circle cx="142" cy="30" r="3.4" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Limits &amp; Continuity</h3>
+      <p>Walk toward a point from both sides and see what value the function is really approaching.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="taylor_series.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 20 C 60 20, 80 82, 120 82 C 160 82, 180 20, 232 20" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <path d="M8 74 C 60 40, 90 30, 120 30 C 150 30, 168 44, 200 74" fill="none" stroke="#b89bff" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
+          <circle cx="120" cy="30" r="4" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Taylor Approximation</h3>
+      <p>Add polynomial terms one at a time and watch them curl into the shape of the true curve.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="accumulation_ftc.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 60 C 60 60, 80 36, 120 36 S 190 54, 232 40" fill="none" stroke="#5cd6b0" stroke-width="2.2"/>
+          <path d="M30 82 Q 90 78, 130 52 T 224 14" fill="none" stroke="#ff8a5b" stroke-width="2.2"/>
+          <path d="M30 82 L 30 60 L 118 60 L 118 82 Z" fill="rgba(255,138,91,0.16)"/>
+          <line x1="150" y1="70" x2="224" y2="18" stroke="#ffd27a" stroke-width="1.6"/>
+        </svg>
+      </div>
+      <h3>The Accumulation Function</h3>
+      <p>Sweep the upper limit and watch the running-area curve draw itself — its slope is exactly f(x).</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="optimization.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M8 30 C 44 30, 52 74, 88 74 C 124 74, 132 20, 168 20 C 196 20, 210 50, 232 64" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <line x1="66" y1="74" x2="110" y2="74" stroke="#5cd6b0" stroke-width="1.6" opacity="0.5"/>
+          <line x1="146" y1="20" x2="190" y2="20" stroke="#ff8a5b" stroke-width="1.6" opacity="0.5"/>
+          <circle cx="88" cy="74" r="4.5" fill="#5cd6b0"/>
+          <circle cx="168" cy="20" r="4.5" fill="#ff8a5b"/>
+        </svg>
+      </div>
+      <h3>Maxima &amp; Minima</h3>
+      <p>Hunt down every peak and valley, and let the second-derivative test name each one.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="slope_fields.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <g stroke="#6f7bb0" stroke-width="1.6" stroke-linecap="round" opacity="0.7">
+            <line x1="24" y1="26" x2="38" y2="20"/><line x1="60" y1="26" x2="74" y2="22"/><line x1="96" y1="26" x2="110" y2="24"/><line x1="132" y1="26" x2="146" y2="26"/><line x1="168" y1="26" x2="182" y2="28"/><line x1="204" y1="26" x2="218" y2="30"/>
+            <line x1="24" y1="52" x2="38" y2="44"/><line x1="60" y1="52" x2="74" y2="47"/><line x1="96" y1="52" x2="110" y2="50"/><line x1="132" y1="52" x2="146" y2="52"/><line x1="168" y1="52" x2="182" y2="54"/><line x1="204" y1="52" x2="218" y2="57"/>
+            <line x1="24" y1="78" x2="38" y2="68"/><line x1="60" y1="78" x2="74" y2="72"/><line x1="96" y1="78" x2="110" y2="76"/><line x1="132" y1="78" x2="146" y2="78"/><line x1="168" y1="78" x2="182" y2="80"/><line x1="204" y1="78" x2="218" y2="84"/>
+          </g>
+          <path d="M14 78 C 70 60, 120 40, 226 20" fill="none" stroke="#5cd6b0" stroke-width="2.6"/>
+          <circle cx="120" cy="45" r="4" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Slope Fields</h3>
+      <p>Read a differential equation as a field of tangents, then thread a solution curve through it.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="newtons_method.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="8" y1="66" x2="232" y2="66" stroke="rgba(180,196,240,0.4)" stroke-width="1.4"/>
+          <path d="M20 20 C 80 92, 150 92, 224 40" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <line x1="196" y1="30" x2="150" y2="66" stroke="#ffd27a" stroke-width="1.8"/>
+          <line x1="150" y1="66" x2="126" y2="80" stroke="#ffd27a" stroke-width="1.8" opacity="0.6"/>
+          <circle cx="196" cy="30" r="4" fill="#ff8a5b"/>
+          <circle cx="150" cy="66" r="3.4" fill="#ff8a5b"/>
+          <circle cx="120" cy="66" r="4" fill="#b89bff"/>
+        </svg>
+      </div>
+      <h3>Newton&rsquo;s Method</h3>
+      <p>Chase a root down the tangent lines and watch the guess double its accuracy every step.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="volume_revolution.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="16" y1="48" x2="224" y2="48" stroke="rgba(180,196,240,0.4)" stroke-width="1.2"/>
+          <g stroke="#ff8a5b" stroke-width="1.4" fill="rgba(255,138,91,0.18)">
+            <ellipse cx="60" cy="48" rx="7" ry="20"/><ellipse cx="96" cy="48" rx="8" ry="27"/>
+            <ellipse cx="132" cy="48" rx="9" ry="32"/><ellipse cx="168" cy="48" rx="9" ry="36"/><ellipse cx="204" cy="48" rx="10" ry="39"/>
+          </g>
+          <path d="M40 12 C 110 6, 170 4, 214 8" fill="none" stroke="#5cd6b0" stroke-width="2"/>
+        </svg>
+      </div>
+      <h3>Volume by Disks</h3>
+      <p>Spin a curve into a solid and stack disks until the sum becomes the exact volume, π∫f².</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="mean_value_theorem.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M12 78 C 70 78, 96 18, 150 18 C 190 18, 210 34, 228 46" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <line x1="40" y1="70" x2="200" y2="24" stroke="#ff8a5b" stroke-width="2"/>
+          <line x1="70" y1="70" x2="150" y2="47" stroke="#ffd27a" stroke-width="2"/>
+          <circle cx="40" cy="70" r="4" fill="#ff8a5b"/><circle cx="200" cy="24" r="4" fill="#ff8a5b"/>
+          <circle cx="110" cy="34" r="4" fill="#b89bff"/>
+        </svg>
+      </div>
+      <h3>Mean Value Theorem</h3>
+      <p>Between any two points, a tangent must run parallel to the chord — find the guaranteed spot.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="related_rates.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="40" y1="86" x2="220" y2="86" stroke="rgba(180,196,240,0.4)" stroke-width="1.6"/>
+          <line x1="40" y1="10" x2="40" y2="86" stroke="rgba(180,196,240,0.4)" stroke-width="1.6"/>
+          <line x1="40" y1="30" x2="120" y2="86" stroke="#5cd6b0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="30" x2="40" y2="30" stroke="#ff8a5b" stroke-width="3"/>
+          <line x1="40" y1="86" x2="120" y2="86" stroke="#ffd27a" stroke-width="3"/>
+          <path d="M40 34 L40 52 M36 46 L40 54 L44 46" fill="none" stroke="#ff8a5b" stroke-width="2"/>
+          <path d="M124 86 L140 86 M134 82 L142 86 L134 90" fill="none" stroke="#ffd27a" stroke-width="2"/>
+        </svg>
+      </div>
+      <h3>Related Rates</h3>
+      <p>Slide a ladder at steady speed and watch the top race away — rates chained by the equation.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="infinite_series.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="16" y1="24" x2="224" y2="24" stroke="#ffd27a" stroke-width="1.6" stroke-dasharray="6 5"/>
+          <g fill="rgba(184,155,255,0.5)">
+            <rect x="30" y="60" width="10" height="24"/><rect x="58" y="70" width="10" height="14"/><rect x="86" y="76" width="10" height="8"/><rect x="114" y="79" width="10" height="5"/><rect x="142" y="81" width="10" height="3"/>
+          </g>
+          <polyline points="35,64 63,42 91,32 119,28 147,26 175,25 203,24" fill="none" stroke="#5cd6b0" stroke-width="2.6"/>
+          <circle cx="35" cy="64" r="3" fill="#5cd6b0"/><circle cx="203" cy="24" r="4" fill="#fff" stroke="#5cd6b0" stroke-width="2"/>
+        </svg>
+      </div>
+      <h3>Infinite Series</h3>
+      <p>Add up endless terms and watch the partial sums settle on a number — or wander off forever.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="parametric_polar.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M120 48 m0,-34 a34,34 0 1,1 -0.1,0 M120 14 C 150 30, 150 66, 120 82 C 90 66, 90 30, 120 14" fill="none" stroke="rgba(140,160,220,0.3)" stroke-width="1.4"/>
+          <path d="M120 14 C 150 30, 150 66, 120 82" fill="none" stroke="#5cd6b0" stroke-width="2.8"/>
+          <line x1="140" y1="60" x2="164" y2="52" stroke="#ffd27a" stroke-width="2.4"/>
+          <path d="M164 52 L157 51 M164 52 L160 57" stroke="#ffd27a" stroke-width="2" fill="none"/>
+          <circle cx="140" cy="60" r="4.5" fill="#ff8a5b"/>
+        </svg>
+      </div>
+      <h3>Parametric &amp; Polar</h3>
+      <p>Drive both coordinates by a clock and trace loops, spirals, and flowers a function can't.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="epsilon_delta.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <rect x="0" y="34" width="240" height="28" fill="rgba(255,210,122,0.14)"/>
+          <rect x="96" y="0" width="48" height="96" fill="rgba(184,155,255,0.14)"/>
+          <path d="M12 82 C 70 78, 96 50, 120 48 C 144 46, 170 20, 228 16" fill="none" stroke="#5cd6b0" stroke-width="2.6"/>
+          <line x1="0" y1="34" x2="240" y2="34" stroke="#ffd27a" stroke-width="1.2" stroke-dasharray="6 5"/>
+          <line x1="0" y1="62" x2="240" y2="62" stroke="#ffd27a" stroke-width="1.2" stroke-dasharray="6 5"/>
+          <circle cx="120" cy="48" r="4" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Epsilon &amp; Delta</h3>
+      <p>Play the rigorous-limit game: name a tolerance and find the window that keeps the curve inside.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="area_between.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M16 80 C 70 60, 150 30, 224 14" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <path d="M16 40 C 70 54, 150 70, 224 78" fill="none" stroke="#b89bff" stroke-width="2.4"/>
+          <path d="M16 80 C 70 60, 150 30, 224 14 L 224 78 C 150 70, 70 54, 16 40 Z" fill="rgba(255,210,122,0.18)"/>
+        </svg>
+      </div>
+      <h3>Area Between Curves</h3>
+      <p>Trap a region between two graphs and sum the gap — top minus bottom — into its area.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="arc_length.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M16 80 C 60 20, 120 20, 150 50 C 175 74, 200 30, 224 20" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <polyline points="16,80 62,30 108,26 150,50 192,34 224,20" fill="none" stroke="#ffd27a" stroke-width="2.2"/>
+          <g fill="#ffd27a"><circle cx="16" cy="80" r="3"/><circle cx="62" cy="30" r="3"/><circle cx="108" cy="26" r="3"/><circle cx="150" cy="50" r="3"/><circle cx="192" cy="34" r="3"/><circle cx="224" cy="20" r="3"/></g>
+        </svg>
+      </div>
+      <h3>Arc Length</h3>
+      <p>Straighten a curve with a chain of tiny segments until the total becomes ∫√(1+f′²).</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="chain_rule.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <rect x="18" y="38" width="34" height="20" rx="4" fill="none" stroke="rgba(140,160,220,0.4)" stroke-width="1.4"/>
+          <rect x="100" y="30" width="30" height="36" rx="6" fill="none" stroke="#b89bff" stroke-width="1.8"/>
+          <rect x="188" y="38" width="34" height="20" rx="4" fill="none" stroke="#ff8a5b" stroke-width="1.8"/>
+          <line x1="52" y1="48" x2="98" y2="48" stroke="#5cd6b0" stroke-width="2"/><path d="M98 48 l-7 -3 l0 6 z" fill="#5cd6b0"/>
+          <line x1="132" y1="48" x2="186" y2="48" stroke="#5cd6b0" stroke-width="2"/><path d="M186 48 l-7 -3 l0 6 z" fill="#5cd6b0"/>
+          <text x="35" y="52" fill="#9aa6cc" font-size="13" font-family="monospace" text-anchor="middle">x</text>
+          <text x="115" y="53" fill="#b89bff" font-size="12" font-family="monospace" text-anchor="middle">g</text>
+          <text x="205" y="52" fill="#ff8a5b" font-size="12" font-family="monospace" text-anchor="middle">f</text>
+        </svg>
+      </div>
+      <h3>The Chain Rule</h3>
+      <p>Follow x through a two-stage pipeline and watch the rates at each stage multiply.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="lhopital.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="16" y1="70" x2="224" y2="70" stroke="rgba(180,196,240,0.35)" stroke-width="1.2"/>
+          <path d="M60 70 C 90 40, 120 24, 160 14" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <path d="M60 70 C 100 52, 140 40, 190 30" fill="none" stroke="#b89bff" stroke-width="2.4"/>
+          <line x1="60" y1="70" x2="150" y2="24" stroke="rgba(92,214,176,0.4)" stroke-width="1.4"/>
+          <line x1="60" y1="70" x2="170" y2="44" stroke="rgba(184,155,255,0.4)" stroke-width="1.4"/>
+          <circle cx="60" cy="70" r="4" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>L&rsquo;Hopital&rsquo;s Rule</h3>
+      <p>Crack a 0/0 limit by swapping the ratio of curves for the ratio of their tangent slopes.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="shell_method.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="120" y1="8" x2="120" y2="90" stroke="rgba(180,196,240,0.4)" stroke-width="1.4"/>
+          <g stroke="#b89bff" stroke-width="1.4" fill="none">
+            <ellipse cx="120" cy="30" rx="86" ry="10"/><ellipse cx="120" cy="30" rx="60" ry="7"/><ellipse cx="120" cy="30" rx="32" ry="4"/>
+            <line x1="34" y1="30" x2="34" y2="78"/><line x1="206" y1="30" x2="206" y2="78"/>
+            <line x1="60" y1="30" x2="60" y2="78"/><line x1="180" y1="30" x2="180" y2="78"/>
+            <line x1="88" y1="30" x2="88" y2="78"/><line x1="152" y1="30" x2="152" y2="78"/>
+          </g>
+        </svg>
+      </div>
+      <h3>The Shell Method</h3>
+      <p>Rotate about the y-axis and build the solid from nested shells: 2π∫x·f(x)dx.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="polar_area.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M120 48 C 150 8, 210 28, 200 48 C 210 68, 150 88, 120 48 Z" fill="none" stroke="#5cd6b0" stroke-width="2.2"/>
+          <g stroke="#ff8a5b" stroke-width="1" fill="rgba(255,138,91,0.16)">
+            <path d="M120 48 L 168 22 L 182 30 Z"/><path d="M120 48 L 182 30 L 194 42 Z"/><path d="M120 48 L 194 42 L 194 54 Z"/><path d="M120 48 L 194 54 L 182 66 Z"/><path d="M120 48 L 182 66 L 168 74 Z"/>
+          </g>
+          <circle cx="120" cy="48" r="3.5" fill="#ffd27a"/>
+        </svg>
+      </div>
+      <h3>Polar Area</h3>
+      <p>Fan triangular wedges from the origin to sweep out a polar region: ½∫r²dθ.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="average_value.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <rect x="30" y="44" width="180" height="40" fill="rgba(255,138,91,0.14)" stroke="#ff8a5b" stroke-width="1.2"/>
+          <path d="M30 78 C 80 20, 130 20, 210 60" fill="none" stroke="#5cd6b0" stroke-width="2.6"/>
+          <line x1="30" y1="44" x2="210" y2="44" stroke="#ffd27a" stroke-width="1.8" stroke-dasharray="6 5"/>
+          <circle cx="72" cy="44" r="3.5" fill="#b89bff"/><circle cx="170" cy="44" r="3.5" fill="#b89bff"/>
+        </svg>
+      </div>
+      <h3>Average Value</h3>
+      <p>Find the rectangle with the same area as the curve — and the point where f hits that height.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="implicit_differentiation.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <path d="M120 20 C 165 20, 165 76, 120 76 C 75 76, 75 20, 120 20 Z" fill="none" stroke="#5cd6b0" stroke-width="2.4"/>
+          <line x1="118" y1="12" x2="188" y2="40" stroke="#ffd27a" stroke-width="2.2"/>
+          <circle cx="153" cy="26" r="4.5" fill="#ff8a5b"/>
+        </svg>
+      </div>
+      <h3>Implicit Differentiation</h3>
+      <p>Find the tangent slope on a curve that isn't a function: dy/dx = −Fx/Fy.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+    <a class="card live" href="improper_integrals.html">
+      <span class="tag on">Live</span>
+      <div class="thumb">
+        <svg viewBox="0 0 240 96" preserveAspectRatio="none">
+          <line x1="16" y1="78" x2="228" y2="78" stroke="rgba(180,196,240,0.4)" stroke-width="1.4"/>
+          <path d="M40 20 C 80 60, 130 72, 224 76" fill="none" stroke="#5cd6b0" stroke-width="2.6"/>
+          <path d="M40 20 C 80 60, 130 72, 224 76 L 224 78 L 40 78 Z" fill="rgba(255,138,91,0.2)"/>
+          <line x1="200" y1="40" x2="216" y2="40" stroke="#ffd27a" stroke-width="2"/><path d="M216 40 l-6 -3 l0 6 z" fill="#ffd27a"/>
+          <text x="210" y="30" fill="#9aa6cc" font-size="13" font-family="monospace" text-anchor="middle">∞</text>
+        </svg>
+      </div>
+      <h3>Improper Integrals</h3>
+      <p>Push the boundary to infinity and see whether an endless region holds a finite area.</p>
+      <span class="go">Explore <span aria-hidden="true">→</span></span>
+    </a>
+
+  </section>
+
+  <section class="how" id="how">
+    <div>
+      <div class="n">01</div>
+      <div class="h">Change, made visible</div>
+      <div class="b">Every explorer turns an abstract symbol into something you can move. The derivative isn't a formula to recall — it's the slope you're watching tilt in real time.</div>
+    </div>
+    <div>
+      <div class="n">02</div>
+      <div class="h">Play, then understand</div>
+      <div class="b">Drag first, read the numbers second. When the tangent goes flat exactly where the curve peaks, the meaning of f′(x)=0 lands on its own.</div>
+    </div>
+    <div>
+      <div class="n">03</div>
+      <div class="h">Built for the classroom</div>
+      <div class="b">A companion to Knovay's GeoProof (geometry) and Physica (physics) — the same clean, distraction-free style, ready to project or hand to a student.</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Calculo — part of the Knovay learning labs.</span>
+    <span>Differential calculus, made interactive.</span>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Let a point move by a clock. x(t) and y(t) — or a polar radius r(θ) — trace out curves no single function y=f(x) could draw. Watch the path unfold and the velocity vector steer it.">
+<meta name="theme-color" content="#0a0e18">
+<title>Parametric &amp; Polar Curves &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0;      /* the traced curve */
+    --ghost:rgba(140,160,220,0.22);
+    --vel:#ffd27a;         /* velocity vector */
+    --pt:#ff8a5b;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(255,138,91,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:9px 8px;font:500 12.5px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
+  .seg button:hover{border-color:rgba(92,214,176,.5);color:var(--ink)}
+  .seg button.on{background:rgba(92,214,176,.14);border-color:var(--accent);color:var(--ink)}
+
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18}
+
+  .animbtn{margin-top:14px;width:100%;background:rgba(92,214,176,.14);border:1px solid var(--accent);color:var(--ink);
+    border-radius:10px;padding:11px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:.14s}
+  .animbtn:hover{background:rgba(92,214,176,.24)}
+  .check{display:flex;align-items:center;gap:10px;margin-top:14px;cursor:pointer;user-select:none}
+  .check input{position:absolute;opacity:0;pointer-events:none}
+  .box{width:38px;height:22px;border-radius:99px;background:rgba(140,160,220,.2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
+  .box::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cdd6f0;transition:.15s}
+  .check input:checked + .box{background:rgba(255,210,122,.5);border-color:var(--vel)}
+  .check input:checked + .box::after{left:18px;background:#fff}
+  .check .lab{font-size:13.5px;color:var(--muted)}
+  .check input:checked ~ .lab{color:var(--ink)}
+
+  .formula{margin-top:16px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;
+    padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);line-height:1.6}
+
+  .readout{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
+  .readout .r .v.vel{color:var(--vel)}
+  .readout .r.full{grid-column:1 / -1}
+  .readout .r .hint{font-size:12px;color:var(--muted);line-height:1.5;font-family:'Inter',sans-serif}
+  .readout .r .hint b{color:var(--ink);font-weight:600}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .legend .dt{width:11px;height:11px;border-radius:50%}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">Parametric &amp; Polar</div>
+      <h1>A Point in Motion</h1>
+    </div>
+    <p class="sub">Instead of y = f(x), let a clock <em>t</em> drive both coordinates at once. The point sweeps out
+       loops, spirals, and flowers — and its velocity vector always points the way it&rsquo;s heading.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Curve</div>
+      <div class="seg" id="curveseg">
+        <button data-i="0" class="on">Circle</button>
+        <button data-i="1">Ellipse</button>
+        <button data-i="2">Lissajous</button>
+        <button data-i="3">Spiral</button>
+        <button data-i="4">Cardioid</button>
+        <button data-i="5">Rose</button>
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label>Clock&nbsp;&nbsp;t</label><span class="val" id="tVal">0.00</span></div>
+        <input type="range" id="t" min="0" max="1" step="0.001" value="0.28">
+      </div>
+
+      <button class="animbtn" id="anim">▶ Trace it</button>
+
+      <label class="check" for="showVel">
+        <input type="checkbox" id="showVel" checked>
+        <span class="box"></span>
+        <span class="lab">Show velocity vector (x&prime;, y&prime;)</span>
+      </label>
+
+      <div class="formula" id="formula">&mdash;</div>
+
+      <div class="readout">
+        <div class="r"><div class="k">Position&nbsp;&nbsp;x(t)</div><div class="v" id="oX">&mdash;</div></div>
+        <div class="r"><div class="k">Position&nbsp;&nbsp;y(t)</div><div class="v" id="oY">&mdash;</div></div>
+        <div class="r"><div class="k">Velocity&nbsp;&nbsp;(x&prime;, y&prime;)</div><div class="v vel" id="oV">&mdash;</div></div>
+        <div class="r"><div class="k">Speed&nbsp;&nbsp;|v|</div><div class="v vel" id="oSpeed">&mdash;</div></div>
+        <div class="r full"><div class="hint" id="hint" style="margin-top:4px"></div></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1500" height="1160"></canvas>
+      <div class="tip" id="tip">slide t or press ▶ &middot; the arrow is the velocity</div>
+      <div class="legend">
+        <span class="li"><span class="ln" style="border-color:var(--accent)"></span> traced path</span>
+        <span class="li"><span class="dt" style="background:var(--pt)"></span> point at t</span>
+        <span class="li"><span class="ln" style="border-color:var(--vel)"></span> velocity</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  // each curve: x(t), y(t) over [0, tmax]; polar ones are given via r(θ) but expressed as x,y here
+  var CURVES = [
+    { name:"Circle",    tmax:2*Math.PI, form:"x = 2 cos t\ny = 2 sin t",
+      x:function(t){ return 2*Math.cos(t); }, y:function(t){ return 2*Math.sin(t); },
+      note:"Constant speed around a fixed radius — the simplest parametric motion." },
+    { name:"Ellipse",   tmax:2*Math.PI, form:"x = 3 cos t\ny = 1.6 sin t",
+      x:function(t){ return 3*Math.cos(t); }, y:function(t){ return 1.6*Math.sin(t); },
+      note:"Same clock, different amplitudes on each axis — the speed now varies around the loop." },
+    { name:"Lissajous", tmax:2*Math.PI, form:"x = 2.4 sin 3t\ny = 2.4 sin 2t",
+      x:function(t){ return 2.4*Math.sin(3*t); }, y:function(t){ return 2.4*Math.sin(2*t); },
+      note:"Different frequencies on x and y weave a standing-wave knot — impossible as a single y = f(x)." },
+    { name:"Spiral",    tmax:6*Math.PI, form:"x = 0.32 t · cos t\ny = 0.32 t · sin t",
+      x:function(t){ return 0.32*t*Math.cos(t); }, y:function(t){ return 0.32*t*Math.sin(t); },
+      note:"A growing radius winds the point outward — an Archimedean spiral." },
+    { name:"Cardioid",  tmax:2*Math.PI, form:"r = 1.4 (1 + cos θ)\n(x,y) = (r cos θ, r sin θ)",
+      x:function(t){ var r=1.4*(1+Math.cos(t)); return r*Math.cos(t); }, y:function(t){ var r=1.4*(1+Math.cos(t)); return r*Math.sin(t); },
+      note:"A polar radius that pulses with the angle traces a heart-shaped cardioid." },
+    { name:"Rose",      tmax:2*Math.PI, form:"r = 2.6 cos 3θ\n(x,y) = (r cos θ, r sin θ)",
+      x:function(t){ var r=2.6*Math.cos(3*t); return r*Math.cos(t); }, y:function(t){ var r=2.6*Math.cos(3*t); return r*Math.sin(t); },
+      note:"r = cos(3θ) opens three petals — polar curves make flowers effortlessly." }
+  ];
+  var ci = 0, tt = 0.28;         // tt is normalized 0..1 of tmax
+  var showVel = true, animId = null;
+
+  function cur(){ return CURVES[ci]; }
+  function T(){ return tt * cur().tmax; }
+  function vel(t){ var e = 1e-4, c = cur();
+    return [ (c.x(t+e)-c.x(t-e))/(2*e), (c.y(t+e)-c.y(t-e))/(2*e) ]; }
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height, DPR = 1, SCALE = 1, CX = 0, CY = 0;
+
+  function fitDPR(){
+    var ratio0 = 1500/1160, cssW = cv.clientWidth || 760, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height; refresh();
+  }
+
+  // fit the whole curve into the canvas with a margin
+  function computeScale(){
+    var c = cur(), N = 800, maxR = 0.5;
+    for(var i=0;i<=N;i++){ var t = c.tmax*i/N; maxR = Math.max(maxR, Math.abs(c.x(t)), Math.abs(c.y(t))); }
+    var m = Math.min(W, H) * 0.44;
+    SCALE = m / (maxR + 0.4);
+    CX = W/2; CY = H/2;
+  }
+  function px(x){ return CX + x*SCALE; }
+  function py(y){ return CY - y*SCALE; }
+
+  function draw(){
+    computeScale();
+    ctx.clearRect(0,0,W,H);
+    var c = cur();
+
+    // axes
+    ctx.strokeStyle = "rgba(180,196,240,0.22)"; ctx.lineWidth = 1.2*DPR;
+    ctx.beginPath(); ctx.moveTo(0, CY); ctx.lineTo(W, CY); ctx.moveTo(CX, 0); ctx.lineTo(CX, H); ctx.stroke();
+    // unit rings for context
+    ctx.strokeStyle = "rgba(140,160,220,0.08)"; ctx.lineWidth = 1*DPR;
+    for(var u=1; u*SCALE < Math.max(W,H)/2; u++){ ctx.beginPath(); ctx.arc(CX, CY, u*SCALE, 0, Math.PI*2); ctx.stroke(); }
+
+    // full curve (ghost)
+    ctx.strokeStyle = "rgba(140,160,220,0.22)"; ctx.lineWidth = 1.6*DPR; ctx.lineJoin = "round"; ctx.beginPath();
+    var N = 1400;
+    for(var i=0;i<=N;i++){ var t = c.tmax*i/N; var X=px(c.x(t)), Y=py(c.y(t)); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke();
+
+    // traced portion up to current t
+    var tc = T();
+    ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 3.2*DPR; ctx.lineJoin = "round"; ctx.beginPath();
+    var M = Math.max(2, Math.round(N * tt));
+    for(var j=0;j<=M;j++){ var tj = tc*j/M; var X2=px(c.x(tj)), Y2=py(c.y(tj)); if(j===0) ctx.moveTo(X2,Y2); else ctx.lineTo(X2,Y2); }
+    ctx.stroke();
+
+    // velocity vector
+    var Xp = c.x(tc), Yp = c.y(tc), v = vel(tc), sp = Math.hypot(v[0], v[1]);
+    if(showVel && sp > 1e-6){
+      var vs = 0.4;                       // scale velocity to world units for display
+      var ex = Xp + v[0]*vs, ey = Yp + v[1]*vs;
+      arrow(px(Xp), py(Yp), px(ex), py(ey), getCss('--vel'));
+    }
+
+    // moving point
+    ctx.beginPath(); ctx.arc(px(Xp), py(Yp), 8*DPR, 0, Math.PI*2); ctx.fillStyle = getCss('--pt'); ctx.fill();
+    ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(10,14,26,0.75)"; ctx.stroke();
+  }
+
+  function arrow(x0,y0,x1,y1,col){
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 3*DPR;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    var ang = Math.atan2(y1-y0, x1-x0), s = 11*DPR;
+    ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1 - s*Math.cos(ang-0.45), y1 - s*Math.sin(ang-0.45));
+    ctx.lineTo(x1 - s*Math.cos(ang+0.45), y1 - s*Math.sin(ang+0.45));
+    ctx.closePath(); ctx.fill();
+  }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+  function fmt(v, d){ if(!isFinite(v)) return "—"; d=(d==null?2:d); if(Math.abs(v)<5e-4) v=0; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+  function refresh(){
+    var c = cur(), tc = T();
+    document.getElementById('tVal').textContent = fmt(tc,2);
+    document.getElementById('formula').textContent = c.form;
+    var v = vel(tc), sp = Math.hypot(v[0], v[1]);
+    document.getElementById('oX').textContent = fmt(c.x(tc),3);
+    document.getElementById('oY').textContent = fmt(c.y(tc),3);
+    document.getElementById('oV').textContent = "(" + fmt(v[0],2) + ", " + fmt(v[1],2) + ")";
+    document.getElementById('oSpeed').textContent = fmt(sp,3);
+    document.getElementById('hint').innerHTML = c.note +
+      ' The arrow is always <b>tangent</b> to the path — that&rsquo;s what the derivative means for motion: the direction of travel.';
+    draw();
+  }
+
+  // ---- interaction ----
+  var Ts = document.getElementById('t');
+  Ts.addEventListener('input', function(){ stopAnim(); tt = parseFloat(Ts.value); refresh(); });
+  document.getElementById('showVel').addEventListener('change', function(e){ showVel = e.target.checked; refresh(); });
+
+  document.getElementById('curveseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    ci = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    refresh();
+  });
+
+  function stopAnim(){ if(animId){ cancelAnimationFrame(animId); animId = null; document.getElementById('anim').textContent = "▶ Trace it"; } }
+  document.getElementById('anim').addEventListener('click', function(){
+    if(animId){ stopAnim(); return; }
+    this.textContent = "❚❚ Pause";
+    if(tt >= 0.999) tt = 0;
+    var last = performance.now();
+    var tick = function(now){
+      var dt = Math.min(0.05, (now-last)/1000); last = now;
+      tt += dt * 0.28;                   // ~3.5s for a full trace
+      if(tt >= 1){ tt = 1; Ts.value = tt; refresh(); stopAnim(); return; }
+      Ts.value = tt; refresh();
+      animId = requestAnimationFrame(tick);
+    };
+    animId = requestAnimationFrame(tick);
+  });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

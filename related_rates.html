@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A ladder slides down a wall at a steady speed — but the top races away faster and faster. Related rates: when one quantity changes, the chain rule fixes how fast the others must move.">
+<meta name="theme-color" content="#0a0e18">
+<title>Related Rates &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0;      /* the ladder */
+    --xr:#ffd27a;          /* horizontal quantity */
+    --yr:#ff8a5b;          /* vertical quantity */
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(255,138,91,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .plabel.mt{margin-top:22px}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:9px 8px;font:500 12.5px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
+  .seg button:hover{border-color:rgba(92,214,176,.5);color:var(--ink)}
+  .seg button.on{background:rgba(92,214,176,.14);border-color:var(--accent);color:var(--ink)}
+
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18}
+
+  .animbtn{margin-top:14px;width:100%;background:rgba(92,214,176,.14);border:1px solid var(--accent);color:var(--ink);
+    border-radius:10px;padding:11px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:.14s}
+  .animbtn:hover{background:rgba(92,214,176,.24)}
+
+  .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
+  .readout .r .v.xr{color:var(--xr)} .readout .r .v.yr{color:var(--yr)}
+  .readout .r.full{grid-column:1 / -1}
+  .readout .r .hint{font-size:12px;color:var(--muted);line-height:1.5;font-family:'Inter',sans-serif}
+  .readout .r .hint b{color:var(--ink);font-weight:600}
+  .eqline{margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted)}
+  .eqline b{color:var(--ink)}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">Related Rates</div>
+      <h1>The Sliding Ladder</h1>
+    </div>
+    <p class="sub">A ladder&rsquo;s foot slides out at a <em>steady</em> speed, yet its top drops ever faster. Because
+       x&sup2;+y&sup2; is fixed, the rates are chained: differentiate and you get how one motion forces the other.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Scenario</div>
+      <div class="seg" id="scnseg">
+        <button data-i="0" class="on">Sliding ladder</button>
+        <button data-i="1">Spreading ripple</button>
+      </div>
+
+      <div class="ctl" id="lenCtl">
+        <div class="row"><label>Ladder length&nbsp;&nbsp;L</label><span class="val" id="LVal">5.0</span></div>
+        <input type="range" id="L" min="3" max="7" step="0.1" value="5">
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label id="pLab">Foot distance&nbsp;&nbsp;x</label><span class="val" id="pVal">3.0</span></div>
+        <input type="range" id="p" min="0.2" max="6.8" step="0.02" value="3">
+      </div>
+      <div class="ctl">
+        <div class="row"><label id="rateLab">Foot speed&nbsp;&nbsp;dx/dt</label><span class="val" id="rateVal">1.0</span></div>
+        <input type="range" id="rate" min="0.2" max="3" step="0.1" value="1">
+      </div>
+
+      <button class="animbtn" id="anim">▶ Slide it</button>
+
+      <div class="readout">
+        <div class="r"><div class="k" id="k1">Foot&nbsp;&nbsp;x</div><div class="v xr" id="oX">&mdash;</div></div>
+        <div class="r"><div class="k" id="k2">Height&nbsp;&nbsp;y</div><div class="v yr" id="oY">&mdash;</div></div>
+        <div class="r"><div class="k" id="k3">given&nbsp;&nbsp;dx/dt</div><div class="v xr" id="oDx">&mdash;</div></div>
+        <div class="r"><div class="k" id="k4">so&nbsp;&nbsp;dy/dt</div><div class="v yr" id="oDy">&mdash;</div></div>
+        <div class="r full"><div class="eqline" id="eqline"></div></div>
+        <div class="r full"><div class="hint" id="hint" style="margin-top:6px"></div></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1160"></canvas>
+      <div class="tip" id="tip">drag the slider or press ▶ &middot; watch the rates diverge</div>
+      <div class="legend" id="legend">
+        <span class="li"><span class="ln" style="border-color:var(--accent)"></span> ladder (length L)</span>
+        <span class="li"><span class="ln" style="border-color:var(--xr)"></span> x (foot)</span>
+        <span class="li"><span class="ln" style="border-color:var(--yr)"></span> y (top)</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var scenario = 0;          // 0 ladder, 1 ripple
+  var L = 5, p = 3, rate = 1;
+  var animId = null;
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height, DPR = 1;
+  var VIEW = { xmin:-1, xmax:8, ymin:-1, ymax:8 };
+
+  function fitDPR(){
+    var ratio0 = 1720/1160, cssW = cv.clientWidth || 860, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height; refresh();
+  }
+  function sx(x){ return (x - VIEW.xmin) / (VIEW.xmax - VIEW.xmin) * W; }
+  function sy(y){ return H - (y - VIEW.ymin) / (VIEW.ymax - VIEW.ymin) * H; }
+
+  function setView(){
+    if(scenario === 0){ var m = Math.max(L, 6) + 1.2; VIEW.xmin = -1; VIEW.xmax = m; VIEW.ymin = -1; VIEW.ymax = m; }
+    else { VIEW.xmin = -7; VIEW.xmax = 7; VIEW.ymin = -7*(H/W); VIEW.ymax = 7*(H/W); }
+  }
+
+  function draw(){
+    setView();
+    ctx.clearRect(0,0,W,H);
+
+    if(scenario === 0) drawLadder();
+    else drawRipple();
+  }
+
+  function drawLadder(){
+    // ground + wall
+    ctx.strokeStyle = "rgba(180,196,240,0.5)"; ctx.lineWidth = 2*DPR;
+    ctx.beginPath(); ctx.moveTo(sx(-0.5), sy(0)); ctx.lineTo(sx(VIEW.xmax), sy(0));      // ground
+    ctx.moveTo(sx(0), sy(-0.5)); ctx.lineTo(sx(0), sy(VIEW.ymax)); ctx.stroke();          // wall
+    // grid ticks
+    ctx.fillStyle = "rgba(150,166,204,0.6)"; ctx.font = (12.5*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for(var gx=1; gx<VIEW.xmax; gx++) ctx.fillText(gx, sx(gx), sy(0)+6);
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for(var gy=1; gy<VIEW.ymax; gy++) ctx.fillText(gy, sx(0)-8, sy(gy));
+
+    var x = Math.min(p, L - 1e-3), y = Math.sqrt(Math.max(0, L*L - x*x));
+
+    // right-triangle fill
+    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(x), sy(0)); ctx.lineTo(sx(0), sy(y)); ctx.closePath();
+    ctx.fillStyle = "rgba(92,214,176,0.07)"; ctx.fill();
+
+    // x leg (foot) and y leg (height)
+    ctx.strokeStyle = getCss('--xr'); ctx.lineWidth = 4*DPR;
+    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(x), sy(0)); ctx.stroke();
+    ctx.strokeStyle = getCss('--yr'); ctx.lineWidth = 4*DPR;
+    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(0), sy(y)); ctx.stroke();
+
+    // the ladder
+    ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 6*DPR; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(sx(x), sy(0)); ctx.lineTo(sx(0), sy(y)); ctx.stroke();
+    ctx.lineCap = "butt";
+
+    // velocity arrows: foot moves right at dx/dt, top moves down at |dy/dt|
+    var dy = -x / y * rate;
+    arrow(sx(x), sy(0), sx(x) + 26*DPR, sy(0), getCss('--xr'));                       // foot →
+    var topLen = Math.min(70, 14 + Math.abs(dy)*16);
+    arrow(sx(0), sy(y), sx(0), sy(y) + topLen*DPR, getCss('--yr'));                   // top ↓
+
+    // joints
+    dot(x, 0, getCss('--xr')); dot(0, y, getCss('--yr'));
+
+    // labels
+    ctx.fillStyle = getCss('--xr'); ctx.font = (14*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText("x = "+x.toFixed(2), sx(x/2), sy(0)+22*DPR);
+    ctx.fillStyle = getCss('--yr'); ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillText("y = "+y.toFixed(2), sx(0)+10*DPR, sy(y/2));
+    ctx.fillStyle = getCss('--accent'); ctx.save();
+    ctx.translate(sx(x/2), sy(y/2)); ctx.rotate(Math.atan2(sy(y)-sy(0), sx(0)-sx(x)));
+    ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText("L = "+L.toFixed(1), 0, -6*DPR); ctx.restore();
+  }
+
+  function drawRipple(){
+    var r = p, dr = rate;                       // radius grows at dr; area A=πr², dA/dt=2πr·dr
+    // concentric faint rings (history)
+    for(var k=1;k<=4;k++){
+      var rr = r * k/4;
+      ctx.strokeStyle = "rgba(92,214,176," + (0.12*k) + ")"; ctx.lineWidth = 1.5*DPR;
+      ctx.beginPath(); ctx.ellipse(sx(0), sy(0), rr*unit(), rr*unit(), 0, 0, Math.PI*2); ctx.stroke();
+    }
+    // filled disk
+    ctx.beginPath(); ctx.ellipse(sx(0), sy(0), r*unit(), r*unit(), 0, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(92,214,176,0.10)"; ctx.fill();
+    ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 4*DPR; ctx.stroke();
+    // radius arrow
+    ctx.strokeStyle = getCss('--xr'); ctx.lineWidth = 4*DPR;
+    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(r), sy(0)); ctx.stroke();
+    arrow(sx(r), sy(0), sx(r)+24*DPR, sy(0), getCss('--xr'));
+    dot(0,0,getCss('--yr')); dot(r,0,getCss('--xr'));
+    ctx.fillStyle = getCss('--xr'); ctx.font = (14*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.fillText("r = "+r.toFixed(2), sx(r/2), sy(0)-8*DPR);
+  }
+  function unit(){ return W / (VIEW.xmax - VIEW.xmin); }
+
+  function arrow(x0,y0,x1,y1,col){
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 3*DPR;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    var ang = Math.atan2(y1-y0, x1-x0), s = 8*DPR;
+    ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1 - s*Math.cos(ang-0.5), y1 - s*Math.sin(ang-0.5));
+    ctx.lineTo(x1 - s*Math.cos(ang+0.5), y1 - s*Math.sin(ang+0.5));
+    ctx.closePath(); ctx.fill();
+  }
+  function dot(x,y,fill){ ctx.beginPath(); ctx.arc(sx(x), sy(y), 6*DPR, 0, Math.PI*2); ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(10,14,26,0.7)"; ctx.stroke(); }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+
+  function fmt(v, d){ if(!isFinite(v)) return "—"; d=(d==null?3:d); return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+  function refresh(){
+    document.getElementById('LVal').textContent = fmt(L,1);
+    document.getElementById('pVal').textContent = fmt(p,2);
+    document.getElementById('rateVal').textContent = fmt(rate,1);
+
+    if(scenario === 0){
+      document.getElementById('lenCtl').style.display = "";
+      document.getElementById('pLab').textContent = "Foot distance  x";
+      document.getElementById('rateLab').textContent = "Foot speed  dx/dt";
+      var P = document.getElementById('p'); P.min = 0.2; P.max = (L - 0.05);
+      if(p > L - 0.05){ p = L - 0.05; P.value = p; }
+      var x = p, y = Math.sqrt(Math.max(1e-6, L*L - x*x)), dy = -x/y*rate;
+      document.getElementById('k1').textContent = "Foot  x";
+      document.getElementById('k2').textContent = "Height  y";
+      document.getElementById('k3').textContent = "given  dx/dt";
+      document.getElementById('k4').textContent = "so  dy/dt";
+      document.getElementById('oX').textContent  = fmt(x,3);
+      document.getElementById('oY').textContent  = fmt(y,3);
+      document.getElementById('oDx').textContent = "+" + fmt(rate,2);
+      document.getElementById('oDy').textContent = fmt(dy,3);
+      document.getElementById('eqline').innerHTML = 'x² + y² = L²&nbsp;&nbsp;⟹&nbsp;&nbsp;2x·(dx/dt) + 2y·(dy/dt) = 0&nbsp;&nbsp;⟹&nbsp;&nbsp;<b>dy/dt = −(x/y)·dx/dt</b>';
+      var hint = document.getElementById('hint');
+      if(y < 0.6) hint.innerHTML = 'The ladder is nearly flat — y→0 makes <b>dy/dt blow up</b>. The top is crashing down far faster than the foot moves out.';
+      else if(x < 0.6) hint.innerHTML = 'Nearly upright — here <b>dy/dt ≈ 0</b>. The top barely moves even though the foot slides at full speed.';
+      else hint.innerHTML = 'The foot moves at a constant <b>' + fmt(rate,2) + '</b>, but the top&rsquo;s speed <b>' + fmt(Math.abs(dy),2) + '</b> depends on the ratio x/y — they are <b>related</b>, not equal.';
+    } else {
+      document.getElementById('lenCtl').style.display = "none";
+      var r = p, dr = rate, dA = 2*Math.PI*r*dr, C = 2*Math.PI*r;
+      document.getElementById('pLab').textContent = "Radius  r";
+      document.getElementById('rateLab').textContent = "Growth speed  dr/dt";
+      document.getElementById('k1').textContent = "Radius  r";
+      document.getElementById('k2').textContent = "Area  A = πr²";
+      document.getElementById('k3').textContent = "given  dr/dt";
+      document.getElementById('k4').textContent = "so  dA/dt";
+      document.getElementById('oX').textContent  = fmt(r,3);
+      document.getElementById('oY').textContent  = fmt(Math.PI*r*r,3);
+      document.getElementById('oDx').textContent = "+" + fmt(dr,2);
+      document.getElementById('oDy').textContent = "+" + fmt(dA,3);
+      document.getElementById('eqline').innerHTML = 'A = πr²&nbsp;&nbsp;⟹&nbsp;&nbsp;<b>dA/dt = 2πr·(dr/dt)</b>';
+      document.getElementById('hint').innerHTML = 'The radius grows steadily, but the area races ahead — <b>dA/dt scales with r</b>, so the bigger the ripple, the faster it gains area (the circumference 2πr = <b>' + fmt(C,2) + '</b> is exactly the factor).';
+    }
+    draw();
+  }
+
+  // ---- interaction ----
+  var Ls = document.getElementById('L'), P = document.getElementById('p'), R = document.getElementById('rate');
+  Ls.addEventListener('input', function(){ L = parseFloat(Ls.value); refresh(); });
+  P.addEventListener('input', function(){ stopAnim(); p = parseFloat(P.value); refresh(); });
+  R.addEventListener('input', function(){ rate = parseFloat(R.value); refresh(); });
+
+  document.getElementById('scnseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    stopAnim();
+    scenario = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    if(scenario === 0){ p = 3; P.min = 0.2; P.max = L-0.05; }
+    else { p = 2; P.min = 0.3; P.max = 6; }
+    P.value = p;
+    refresh();
+  });
+
+  // animate the driving variable at its constant rate
+  function stopAnim(){ if(animId){ cancelAnimationFrame(animId); animId = null; document.getElementById('anim').textContent = scenario===0? "▶ Slide it" : "▶ Grow it"; } }
+  document.getElementById('anim').addEventListener('click', function(){
+    if(animId){ stopAnim(); return; }
+    this.textContent = "❚❚ Pause";
+    var last = performance.now();
+    var tick = function(now){
+      var dt = Math.min(0.05, (now - last)/1000); last = now;
+      p += rate * dt;
+      var hi = scenario===0 ? (L-0.05) : 6;
+      if(p >= hi){ p = hi; P.value = p; refresh(); stopAnim(); return; }
+      P.value = p; refresh();
+      animId = requestAnimationFrame(tick);
+    };
+    animId = requestAnimationFrame(tick);
+  });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

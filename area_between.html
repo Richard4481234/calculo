@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The area trapped between two curves is the integral of the gap between them. Drag the interval and watch it add up — top minus bottom, summed across x.">
+<meta name="theme-color" content="#0a0e18">
+<title>Area Between Curves &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --f1:#5cd6b0; --f2:#b89bff; --fill:#ffd27a;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(255,210,122,0.08), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(184,155,255,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--fill);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .plabel.mt{margin-top:22px}
+
+  .seg{display:grid;grid-template-columns:1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:10px 10px;font-family:'JetBrains Mono',monospace;font-size:12.5px;cursor:pointer;transition:.14s;text-align:left}
+  .seg button:hover{border-color:rgba(255,210,122,.5);color:var(--ink)}
+  .seg button.on{background:rgba(255,210,122,.12);border-color:var(--fill);color:var(--ink)}
+
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--fill);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--fill)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--fill);cursor:pointer;border:2px solid #0a0e18}
+  .check{display:flex;align-items:center;gap:10px;margin-top:15px;cursor:pointer;user-select:none}
+  .check input{position:absolute;opacity:0;pointer-events:none}
+  .box{width:38px;height:22px;border-radius:99px;background:rgba(140,160,220,.2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
+  .box::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cdd6f0;transition:.15s}
+  .check input:checked + .box{background:rgba(255,210,122,.5);border-color:var(--fill)}
+  .check input:checked + .box::after{left:18px;background:#fff}
+  .check .lab{font-size:13.5px;color:var(--muted)} .check input:checked ~ .lab{color:var(--ink)}
+
+  .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:19px;color:var(--ink);margin-top:3px}
+  .readout .r .v.area{color:var(--fill)}
+  .readout .r.full{grid-column:1 / -1}
+  .readout .r .hint{font-size:12px;color:var(--muted);line-height:1.5;font-family:'Inter',sans-serif}
+  .readout .r .hint b{color:var(--ink);font-weight:600}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .legend .sw{width:15px;height:12px;border-radius:3px}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">Integral Applications</div>
+      <h1>Area Between Curves</h1>
+    </div>
+    <p class="sub">The region trapped between two curves has area &int;&#8202;(top &minus; bottom)&#8202;dx. Slide the
+       limits, add thin strips of height <em>|f&minus;g|</em>, and watch them total the enclosed area.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Curve pair</div>
+      <div class="seg" id="pairseg">
+        <button data-i="0" class="on">y = x &nbsp;and&nbsp; y = x²</button>
+        <button data-i="1">y = 4−x² &nbsp;and&nbsp; y = x²</button>
+        <button data-i="2">y = sin x &nbsp;and&nbsp; y = cos x</button>
+        <button data-i="3">y = x³ &nbsp;and&nbsp; y = x</button>
+        <button data-i="4">y = eˣ⁄³ &nbsp;and&nbsp; y = x</button>
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label>Left&nbsp;&nbsp;a</label><span class="val" id="aVal">0.00</span></div>
+        <input type="range" id="a" min="-3" max="3" step="0.02" value="0">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Right&nbsp;&nbsp;b</label><span class="val" id="bVal">1.00</span></div>
+        <input type="range" id="b" min="-3" max="4" step="0.02" value="1">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Strips&nbsp;&nbsp;n</label><span class="val" id="nVal">16</span></div>
+        <input type="range" id="n" min="1" max="80" step="1" value="16">
+      </div>
+
+      <label class="check" for="snap">
+        <input type="checkbox" id="snap" checked>
+        <span class="box"></span>
+        <span class="lab">Snap a, b to the crossing points</span>
+      </label>
+
+      <div class="readout">
+        <div class="r"><div class="k">Strip sum&nbsp;&nbsp;Σ|f−g|Δx</div><div class="v area" id="oApprox">&mdash;</div></div>
+        <div class="r"><div class="k">Exact area</div><div class="v area" id="oExact">&mdash;</div></div>
+        <div class="r"><div class="k">Crossings in view</div><div class="v" id="oCross">&mdash;</div></div>
+        <div class="r"><div class="k">Strip width</div><div class="v" id="oDx">&mdash;</div></div>
+        <div class="r full"><div class="hint" id="hint"></div></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1080"></canvas>
+      <div class="tip">the shaded strips are the gap between the curves</div>
+      <div class="legend">
+        <span class="li"><span class="ln" style="border-color:var(--f1)"></span> f(x)</span>
+        <span class="li"><span class="ln" style="border-color:var(--f2)"></span> g(x)</span>
+        <span class="li"><span class="sw" style="background:rgba(255,210,122,0.22)"></span> region</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PAIRS = [
+    { f:function(x){ return x; },            g:function(x){ return x*x; },          a0:0,   b0:1 },
+    { f:function(x){ return 4 - x*x; },      g:function(x){ return x*x; },          a0:-Math.SQRT2, b0:Math.SQRT2 },
+    { f:function(x){ return Math.sin(x); },  g:function(x){ return Math.cos(x); },  a0:Math.PI/4, b0:5*Math.PI/4 },
+    { f:function(x){ return x*x*x; },        g:function(x){ return x; },            a0:-1,  b0:1 },
+    { f:function(x){ return Math.exp(x/3); },g:function(x){ return x; },            a0:-2,  b0:3 }
+  ];
+  var pi = 0, a = 0, b = 1, n = 16, snap = true;
+
+  function f(x){ return PAIRS[pi].f(x); }
+  function g(x){ return PAIRS[pi].g(x); }
+
+  // exact area = fine-grid integral of |f-g|
+  function exactArea(lo, hi){
+    var N = 6000, h = (hi-lo)/N, s = 0;
+    for(var i=0;i<N;i++){ var x = lo + (i+0.5)*h; s += Math.abs(f(x) - g(x)); }
+    return s * h;
+  }
+  function stripArea(lo, hi){
+    var h = (hi-lo)/n, s = 0;
+    for(var k=0;k<n;k++){ var x = lo + (k+0.5)*h; s += Math.abs(f(x) - g(x)); }
+    return { v: s*h, dx: h };
+  }
+  // crossings of f-g in [lo,hi]
+  function crossings(lo, hi){
+    var cs = [], N = 2000, step = (hi-lo)/N, prev = f(lo)-g(lo), x;
+    for(var i=1;i<=N;i++){
+      x = lo + i*step; var cur = f(x)-g(x);
+      if((prev<0&&cur>0)||(prev>0&&cur<0)){
+        var A2=x-step,B2=x,fa=f(A2)-g(A2),m;
+        for(var j=0;j<44;j++){ m=(A2+B2)/2; var fm=f(m)-g(m); if(fa*fm<=0){B2=m;}else{A2=m;fa=fm;} }
+        cs.push(m);
+      }
+      prev = cur;
+    }
+    return cs;
+  }
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var VIEW = { xmin:-3, xmax:4, ymin:-3, ymax:5 };
+  var W = cv.width, H = cv.height, DPR = 1;
+
+  function fitDPR(){
+    var ratio0 = 1720/1080, cssW = cv.clientWidth || 860, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height; refresh();
+  }
+  function sx(x){ return (x - VIEW.xmin) / (VIEW.xmax - VIEW.xmin) * W; }
+  function sy(y){ return H - (y - VIEW.ymin) / (VIEW.ymax - VIEW.ymin) * H; }
+
+  function computeView(){
+    var lo = Math.min(a,b), hi = Math.max(a,b);
+    VIEW.xmin = Math.min(lo, -1) - 0.5; VIEW.xmax = Math.max(hi, 1) + 0.6;
+    var ymin = 0, ymax = 0, i, x, cap = 9;
+    for(i=0;i<=300;i++){ x = VIEW.xmin + (VIEW.xmax-VIEW.xmin)*i/300;
+      [f(x), g(x)].forEach(function(y){ if(isFinite(y)){ y=Math.max(-cap,Math.min(cap,y)); if(y<ymin)ymin=y; if(y>ymax)ymax=y; } }); }
+    var span = (ymax-ymin)||2; VIEW.ymin = ymin - span*0.12 - 0.3; VIEW.ymax = ymax + span*0.12 + 0.3;
+  }
+
+  function draw(){
+    computeView();
+    ctx.clearRect(0,0,W,H);
+    var lo = Math.min(a,b), hi = Math.max(a,b), h = (hi-lo)/n;
+
+    // grid + axes
+    ctx.lineWidth = 1*DPR; ctx.strokeStyle = "rgba(140,160,220,0.08)"; ctx.beginPath();
+    for(var gx=Math.ceil(VIEW.xmin); gx<=VIEW.xmax; gx++){ ctx.moveTo(sx(gx),0); ctx.lineTo(sx(gx),H); }
+    for(var gy=Math.ceil(VIEW.ymin); gy<=VIEW.ymax; gy++){ ctx.moveTo(0,sy(gy)); ctx.lineTo(W,sy(gy)); }
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(180,196,240,0.35)"; ctx.lineWidth = 1.4*DPR; ctx.beginPath();
+    ctx.moveTo(0, sy(0)); ctx.lineTo(W, sy(0));
+    if(sx(0)>=0&&sx(0)<=W){ ctx.moveTo(sx(0),0); ctx.lineTo(sx(0),H); }
+    ctx.stroke();
+    ctx.fillStyle = "rgba(150,166,204,0.7)"; ctx.font = (13*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for(var tx=Math.ceil(VIEW.xmin); tx<=VIEW.xmax; tx++){ if(tx!==0) ctx.fillText(tx, sx(tx), sy(0)+6); }
+
+    // strips (gap between curves)
+    for(var k=0;k<n;k++){
+      var xm = lo + (k+0.5)*h, xL = lo + k*h, xR = xL + h;
+      var top = Math.max(f(xm), g(xm)), bot = Math.min(f(xm), g(xm));
+      ctx.fillStyle = "rgba(255,210,122,0.20)";
+      ctx.fillRect(sx(xL), sy(top), sx(xR)-sx(xL), sy(bot)-sy(top));
+      ctx.strokeStyle = "rgba(255,210,122,0.4)"; ctx.lineWidth = 1*DPR;
+      ctx.strokeRect(sx(xL), sy(top), sx(xR)-sx(xL), sy(bot)-sy(top));
+    }
+
+    // curves
+    plotCurve(f, getCss('--f1'), 3.0);
+    plotCurve(g, getCss('--f2'), 3.0);
+
+    // boundary lines + intersection dots
+    [lo,hi].forEach(function(bx){
+      ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.lineWidth = 1.2*DPR; ctx.setLineDash([4*DPR,4*DPR]);
+      ctx.beginPath(); ctx.moveTo(sx(bx),0); ctx.lineTo(sx(bx),H); ctx.stroke(); ctx.setLineDash([]);
+    });
+    crossings(VIEW.xmin, VIEW.xmax).forEach(function(x){ dot(x, f(x), "#ffffff"); });
+  }
+
+  function plotCurve(gg, color, lw){
+    ctx.strokeStyle = color; ctx.lineWidth = lw*DPR; ctx.lineJoin="round"; ctx.beginPath();
+    var N=1000, pen=false, prevY=null;
+    for(var i=0;i<=N;i++){ var x=VIEW.xmin+(VIEW.xmax-VIEW.xmin)*i/N, y=gg(x);
+      if(!isFinite(y)||Math.abs(y)>1e5){ pen=false; continue; }
+      var py=sy(y); if(pen&&prevY!==null&&Math.abs(py-prevY)>H*1.3) pen=false;
+      if(!pen){ ctx.moveTo(sx(x),py); pen=true; } else ctx.lineTo(sx(x),py); prevY=py; }
+    ctx.stroke();
+  }
+  function dot(x,y,fill){ if(!isFinite(y))return; ctx.beginPath(); ctx.arc(sx(x),sy(y),5.5*DPR,0,Math.PI*2); ctx.fillStyle=fill; ctx.fill();
+    ctx.lineWidth=2*DPR; ctx.strokeStyle="rgba(10,14,26,0.7)"; ctx.stroke(); }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0"; }
+  function fmt(v,d){ if(!isFinite(v))return "—"; d=(d==null?3:d); return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+  function refresh(){
+    if(b - a < 0.1) b = a + 0.1;
+    document.getElementById('aVal').textContent = fmt(a,2);
+    document.getElementById('bVal').textContent = fmt(b,2);
+    document.getElementById('nVal').textContent = n;
+    var lo = Math.min(a,b), hi = Math.max(a,b);
+    var D = stripArea(lo,hi), ex = exactArea(lo,hi);
+    var cr = crossings(lo+1e-4, hi-1e-4);
+    document.getElementById('oApprox').textContent = fmt(D.v,3);
+    document.getElementById('oExact').textContent = fmt(ex,3);
+    document.getElementById('oCross').textContent = cr.length;
+    document.getElementById('oDx').textContent = fmt(D.dx,3);
+    document.getElementById('hint').innerHTML = 'Each strip is <b>|f − g|·Δx</b> — the vertical gap times the width. Add them across [a, b] and the sum closes on the exact area <b>' + fmt(ex,3) + '</b>. ' + (cr.length? 'Where the curves cross, top and bottom swap — the absolute value keeps every piece positive.' : 'One curve stays above the other across this interval.');
+    draw();
+  }
+
+  // ---- interaction ----
+  var A = document.getElementById('a'), B = document.getElementById('b'), N = document.getElementById('n');
+  A.addEventListener('input', function(){ a = parseFloat(A.value); refresh(); });
+  B.addEventListener('input', function(){ b = parseFloat(B.value); refresh(); });
+  N.addEventListener('input', function(){ n = parseInt(N.value,10); refresh(); });
+  document.getElementById('snap').addEventListener('change', function(e){ snap = e.target.checked; if(snap) doSnap(); refresh(); });
+
+  function doSnap(){
+    var cr = crossings(VIEW.xmin, VIEW.xmax);
+    if(cr.length >= 2){ a = cr[0]; b = cr[cr.length-1]; A.value = a; B.value = b; }
+  }
+
+  document.getElementById('pairseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    pi = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    a = PAIRS[pi].a0; b = PAIRS[pi].b0; A.value = a; B.value = b;
+    refresh();
+  });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

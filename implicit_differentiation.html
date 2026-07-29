@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="When a curve isn't a function y=f(x), you can still find its slope. Implicit differentiation gives dy/dx = -Fx/Fy at every point of F(x,y)=0 — even where the curve loops back on itself.">
+<meta name="theme-color" content="#0a0e18">
+<title>Implicit Differentiation &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.6);--line:rgba(140,160,220,0.16);--ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--tan:#ffd27a;--pt:#ff8a5b;--r:16px;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(255,210,122,0.08),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(92,214,176,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)}.back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--tan);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}.sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;text-align:center}
+  .seg button:hover{border-color:rgba(255,210,122,.5);color:var(--ink)}.seg button.on{background:rgba(255,210,122,.12);border-color:var(--tan);color:var(--ink)}
+  .ctl{margin-top:16px}.ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}.ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--pt);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--pt)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--pt);cursor:pointer;border:2px solid #0a0e18}
+  .eqbox{margin-top:16px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);text-align:center}
+  .readout{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:17px;color:var(--ink);margin-top:3px}
+  .readout .r .v.tan{color:var(--tan)}
+  .readout .r.full{grid-column:1/-1}
+  .lhline{grid-column:1/-1;margin-top:2px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:13px;text-align:center;line-height:1.7}
+  .lhline .r{color:var(--tan)}
+  .hint{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.55;font-family:'Inter',sans-serif}.hint b{color:var(--ink);font-weight:600}
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}.legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}.legend .dt{width:11px;height:11px;border-radius:50%}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+  <header class="head">
+    <div><a class="back" href="index.html">&larr; Calculo</a><div class="kicker">Implicit Differentiation</div><h1>Slopes Without y = f(x)</h1></div>
+    <p class="sub">A circle isn&rsquo;t a function — two y&rsquo;s for each x. Yet every point still has a tangent. Differentiate
+       the relation F(x,y)=0 and the slope falls out: <em>dy/dx = &minus;F&#8339;/F&#8340;</em>.</p>
+  </header>
+  <div class="stage">
+    <aside class="panel">
+      <div class="plabel">Curve&nbsp;&nbsp;F(x,y) = 0</div>
+      <div class="seg" id="fnseg">
+        <button data-i="0" class="on">x²+y²=4</button>
+        <button data-i="1">x²/9+y²/4=1</button>
+        <button data-i="2">x²−y²=1</button>
+        <button data-i="3">x²+xy+y²=3</button>
+        <button data-i="4">x³+y³=3xy</button>
+        <button data-i="5">lemniscate</button>
+      </div>
+      <div class="ctl"><div class="row"><label>Move point along curve</label><span class="val" id="sVal">0.10</span></div><input type="range" id="s" min="0" max="1" step="0.001" value="0.1"></div>
+      <div class="eqbox" id="eqbox">&mdash;</div>
+      <div class="readout">
+        <div class="r"><div class="k">Point (x, y)</div><div class="v" id="oP">&mdash;</div></div>
+        <div class="r"><div class="k">slope&nbsp;dy/dx</div><div class="v tan" id="oSlope">&mdash;</div></div>
+        <div class="r"><div class="k">F&#8339;</div><div class="v" id="oFx">&mdash;</div></div>
+        <div class="r"><div class="k">F&#8340;</div><div class="v" id="oFy">&mdash;</div></div>
+        <div class="lhline" id="lhline">&mdash;</div>
+        <div class="hint" id="hint"></div>
+      </div>
+    </aside>
+    <div class="graphwrap">
+      <canvas id="cv" width="1500" height="1160"></canvas>
+      <div class="tip">slide the point &middot; the tangent&rsquo;s slope is −F&#8339;/F&#8340;</div>
+      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> F(x,y)=0</span><span class="li"><span class="ln" style="border-color:var(--tan)"></span> tangent</span><span class="li"><span class="dt" style="background:var(--pt)"></span> point</span></div>
+    </div>
+  </div>
+<script>
+(function(){
+  "use strict";
+  var TWO=2*Math.PI, R6=Math.sqrt(6);
+  var CURVES=[
+    { eq:"x² + y² = 4", Fx:function(x,y){return 2*x;}, Fy:function(x,y){return 2*y;},
+      pt:function(s){var t=TWO*s;return [2*Math.cos(t),2*Math.sin(t)];}, closed:true },
+    { eq:"x²/9 + y²/4 = 1", Fx:function(x,y){return 2*x/9;}, Fy:function(x,y){return y/2;},
+      pt:function(s){var t=TWO*s;return [3*Math.cos(t),2*Math.sin(t)];}, closed:true },
+    { eq:"x² − y² = 1", Fx:function(x,y){return 2*x;}, Fy:function(x,y){return -2*y;},
+      pt:function(s){var t=-2.2+4.4*s;return [Math.cosh(t),Math.sinh(t)];}, closed:false, twin:true },
+    { eq:"x² + xy + y² = 3", Fx:function(x,y){return 2*x+y;}, Fy:function(x,y){return x+2*y;},
+      pt:function(s){var t=TWO*s,u=Math.SQRT2*Math.cos(t),v=R6*Math.sin(t);return [(u+v)/Math.SQRT2,(u-v)/Math.SQRT2];}, closed:true },
+    { eq:"x³ + y³ = 3xy", Fx:function(x,y){return 3*x*x-3*y;}, Fy:function(x,y){return 3*y*y-3*x;},
+      pt:function(s){var t=0.03+ s*s*40;var d=1+t*t*t;return [3*t/d,3*t*t/d];}, closed:false, folium:true },
+    { eq:"(x²+y²)² = 4(x²−y²)", Fx:function(x,y){return 4*x*(x*x+y*y-2);}, Fy:function(x,y){return 4*y*(x*x+y*y+2);},
+      pt:function(s){var th=(-Math.PI/4+Math.PI/2*s)*0.985;var r=2*Math.sqrt(Math.max(0,Math.cos(2*th)));return [r*Math.cos(th),r*Math.sin(th)];}, closed:false, lemn:true }
+  ];
+  var ci=0, ss=0.1;
+  function slope(x,y){var fy=CURVES[ci].Fy(x,y); if(Math.abs(fy)<1e-9) return Infinity; return -CURVES[ci].Fx(x,y)/fy;}
+
+  var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,DPR=1,SCALE=1,CX=0,CY=0;
+  function fitDPR(){var r0=1500/1160,cw=cv.clientWidth||760,ch=Math.round(cw/r0),dpr=window.devicePixelRatio||1;DPR=dpr;cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);W=cv.width;H=cv.height;refresh();}
+  function computeScale(){var mx=1;for(var i=0;i<=600;i++){var P=CURVES[ci].pt(i/600);if(isFinite(P[0])&&isFinite(P[1]))mx=Math.max(mx,Math.abs(P[0]),Math.abs(P[1]));}mx=Math.min(mx,4.5);SCALE=Math.min(W,H)*0.4/(mx+0.5);CX=W/2;CY=H/2;}
+  function PX(x){return CX+x*SCALE;} function PY(y){return CY-y*SCALE;}
+  function draw(){
+    computeScale();ctx.clearRect(0,0,W,H);var C=CURVES[ci];
+    // axes
+    ctx.strokeStyle="rgba(180,196,240,0.25)";ctx.lineWidth=1.2*DPR;ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.stroke();
+    ctx.strokeStyle="rgba(140,160,220,0.08)";ctx.lineWidth=1*DPR;for(var u=1;u*SCALE<Math.max(W,H)/2;u++){ctx.beginPath();ctx.arc(CX,CY,u*SCALE,0,Math.PI*2);ctx.stroke();}
+    // the curve (sample param; break on NaN/jumps)
+    drawParam(function(s){return C.pt(s);}, getCss('--accent'), 3.0);
+    if(C.twin) drawParam(function(s){var P=C.pt(s);return [-P[0],P[1]];}, "rgba(92,214,176,0.5)", 2.4); // other hyperbola branch
+    if(C.lemn) drawParam(function(s){var P=C.pt(s);return [-P[0],P[1]];}, getCss('--accent'), 3.0);      // left loop
+    // point + tangent
+    var P=C.pt(ss),x=P[0],y=P[1],m=slope(x,y);
+    if(isFinite(m)){
+      var dxw=2.4, x0=x-dxw, x1=x+dxw;
+      ctx.strokeStyle=getCss('--tan');ctx.lineWidth=2.6*DPR;ctx.beginPath();
+      ctx.moveTo(PX(x0),PY(y+m*(x0-x)));ctx.lineTo(PX(x1),PY(y+m*(x1-x)));ctx.stroke();
+    } else {
+      ctx.strokeStyle=getCss('--tan');ctx.lineWidth=2.6*DPR;ctx.beginPath();ctx.moveTo(PX(x),0);ctx.lineTo(PX(x),H);ctx.stroke();
+    }
+    ctx.beginPath();ctx.arc(PX(x),PY(y),8*DPR,0,Math.PI*2);ctx.fillStyle=getCss('--pt');ctx.fill();ctx.lineWidth=2*DPR;ctx.strokeStyle="rgba(10,14,26,0.75)";ctx.stroke();
+  }
+  function drawParam(pf,color,lw){
+    ctx.strokeStyle=color;ctx.lineWidth=lw*DPR;ctx.lineJoin="round";ctx.beginPath();
+    var N=1600,pen=false,prevX=null,prevY=null;
+    for(var i=0;i<=N;i++){var P=pf(i/N);var x=P[0],y=P[1];if(!isFinite(x)||!isFinite(y)){pen=false;continue;}
+      var px=PX(x),py=PY(y);
+      if(pen&&prevX!==null&&Math.hypot(px-prevX,py-prevY)>H*0.5){pen=false;}
+      if(!pen){ctx.moveTo(px,py);pen=true;}else ctx.lineTo(px,py);prevX=px;prevY=py;}
+    ctx.stroke();
+  }
+  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0";}
+  function fmt(v,d){if(v===Infinity||v===-Infinity)return "±∞";if(!isFinite(v))return "—";d=(d==null?3:d);if(Math.abs(v)<5e-4)v=0;return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function refresh(){
+    var C=CURVES[ci],P=C.pt(ss),x=P[0],y=P[1],fx=C.Fx(x,y),fy=C.Fy(x,y),m=slope(x,y);
+    document.getElementById('sVal').textContent=fmt(ss,2);
+    document.getElementById('eqbox').textContent=C.eq;
+    document.getElementById('oP').textContent="("+fmt(x,2)+", "+fmt(y,2)+")";
+    document.getElementById('oSlope').textContent=fmt(m,3);
+    document.getElementById('oFx').textContent=fmt(fx,2);
+    document.getElementById('oFy').textContent=fmt(fy,2);
+    document.getElementById('lhline').innerHTML="dy/dx = −F&#8339;/F&#8340; = −("+fmt(fx,2)+")/("+fmt(fy,2)+") = <span class='r'>"+fmt(m,3)+"</span>";
+    document.getElementById('hint').innerHTML='Differentiating <b>'+C.eq+'</b> term by term (treating y as a function of x) gives F&#8339; + F&#8340;·y′ = 0, so <b>y′ = −F&#8339;/F&#8340;</b>. '+(!isFinite(m)?'Here F&#8340; = 0, so the tangent is <b>vertical</b> — a place no y=f(x) could describe.':'No need to solve for y first — the slope comes straight from the relation.');
+    draw();
+  }
+  var S=document.getElementById('s');
+  S.addEventListener('input',function(){ss=parseFloat(S.value);refresh();});
+  document.getElementById('fnseg').addEventListener('click',function(e){var btn=e.target.closest('button');if(!btn)return;ci=parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.classList.remove('on');});btn.classList.add('on');ss=0.1;S.value=0.1;refresh();});
+  window.addEventListener('resize',fitDPR);fitDPR();
+})();
+</script>
+</body>
+</html>

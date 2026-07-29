@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A differential equation gives the slope at every point in the plane. See the whole direction field at once, then drop a starting point and watch the solution curve thread its way through.">
+<meta name="theme-color" content="#0a0e18">
+<title>Slope Fields &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0;      /* solution curve */
+    --field:#6f7bb0;       /* slope-field ticks */
+    --seed:#ffd27a;        /* initial point */
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(184,155,255,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .plabel.mt{margin-top:24px}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
+  .seg button:hover{border-color:rgba(92,214,176,.5);color:var(--ink)}
+  .seg button.on{background:rgba(92,214,176,.14);border-color:var(--accent);color:var(--ink)}
+
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--seed);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--seed)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--seed);cursor:pointer;border:2px solid #0a0e18}
+
+  .check{display:flex;align-items:center;gap:10px;margin-top:15px;cursor:pointer;user-select:none}
+  .check input{position:absolute;opacity:0;pointer-events:none}
+  .box{width:38px;height:22px;border-radius:99px;background:rgba(140,160,220,.2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
+  .box::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cdd6f0;transition:.15s}
+  .check input:checked + .box{background:rgba(92,214,176,.5);border-color:var(--accent)}
+  .check input:checked + .box::after{left:18px;background:#fff}
+  .check .lab{font-size:13.5px;color:var(--muted)}
+  .check input:checked ~ .lab{color:var(--ink)}
+
+  .eqbox{margin-top:16px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;
+    padding:12px 13px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent)}
+  .eqbox .fam{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}
+
+  .readout{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
+  .readout .r .v.seed{color:var(--seed)}
+  .readout .r.full{grid-column:1 / -1}
+  .readout .r .hint{font-size:12px;color:var(--muted);line-height:1.5;font-family:'Inter',sans-serif}
+  .readout .r .hint b{color:var(--ink);font-weight:600}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none;cursor:crosshair}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .legend .dt{width:11px;height:11px;border-radius:50%}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">Differential Equations</div>
+      <h1>Slope Fields</h1>
+    </div>
+    <p class="sub">A differential equation doesn&rsquo;t hand you a curve — it hands you a <em>slope at every point</em>.
+       See the whole field of little tangents, then drop a start and let the solution thread through it.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Equation&nbsp;&nbsp;dy/dx =</div>
+      <div class="seg" id="eqseg">
+        <button data-i="0" class="on">x</button>
+        <button data-i="1">y</button>
+        <button data-i="2">x &minus; y</button>
+        <button data-i="3">&minus;x / y</button>
+        <button data-i="4">y(1 &minus; y)</button>
+        <button data-i="5">sin(x) &minus; y</button>
+      </div>
+
+      <div class="eqbox" id="eqbox">dy/dx = x<span class="fam" id="fam"></span></div>
+
+      <div class="ctl">
+        <div class="row"><label>Start&nbsp;&nbsp;x&#8320;</label><span class="val" id="x0Val">-3.0</span></div>
+        <input type="range" id="x0" min="-5" max="5" step="0.1" value="-3">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Start&nbsp;&nbsp;y&#8320;</label><span class="val" id="y0Val">1.5</span></div>
+        <input type="range" id="y0" min="-4" max="4" step="0.1" value="1.5">
+      </div>
+
+      <label class="check" for="showCurve">
+        <input type="checkbox" id="showCurve" checked>
+        <span class="box"></span>
+        <span class="lab">Draw the solution through the start</span>
+      </label>
+
+      <div class="readout">
+        <div class="r"><div class="k">Start</div><div class="v seed" id="oSeed">&mdash;</div></div>
+        <div class="r"><div class="k">Slope there&nbsp;&nbsp;dy/dx</div><div class="v" id="oSlope">&mdash;</div></div>
+        <div class="r full"><div class="hint" id="hint"></div></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1200"></canvas>
+      <div class="tip" id="tip">click or drag anywhere to move the start</div>
+      <div class="legend">
+        <span class="li"><span class="ln" style="border-color:var(--field)"></span> slope field</span>
+        <span class="li"><span class="ln" style="border-color:var(--accent)"></span> solution curve</span>
+        <span class="li"><span class="dt" style="background:var(--seed)"></span> start (x&#8320;, y&#8320;)</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var EQS = [
+    { name:"x",          tex:"dy/dx = x",          fam:"solutions: y = x²/2 + C  (parabolas)",           g:function(x,y){ return x; } },
+    { name:"y",          tex:"dy/dx = y",          fam:"solutions: y = C·eˣ  (exponentials)",            g:function(x,y){ return y; } },
+    { name:"x - y",      tex:"dy/dx = x − y",      fam:"all curves bend toward the line y = x − 1",      g:function(x,y){ return x - y; } },
+    { name:"-x/y",       tex:"dy/dx = −x / y",     fam:"solutions: x² + y² = C  (circles)",              g:function(x,y){ return Math.abs(y)<1e-4 ? (x>0?-1e6:1e6) : -x/y; } },
+    { name:"y(1-y)",     tex:"dy/dx = y(1 − y)",   fam:"logistic: everything settles toward y = 1",      g:function(x,y){ return y*(1-y); } },
+    { name:"sin(x) - y", tex:"dy/dx = sin(x) − y", fam:"curves chase a shifted sine wave",               g:function(x,y){ return Math.sin(x) - y; } }
+  ];
+  var ei = 0, x0 = -3, y0 = 1.5, showCurve = true;
+
+  function g(x,y){ return EQS[ei].g(x,y); }
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var VIEW = { xmin:-5, xmax:5, ymin:-4, ymax:4 };
+  var W = cv.width, H = cv.height, DPR = 1;
+
+  function fitDPR(){
+    var ratio0 = 1720/1200, cssW = cv.clientWidth || 860, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height;
+    // keep world aspect matched to pixels so slope ticks read true
+    var xr = VIEW.xmax - VIEW.xmin, yr = xr * (H/W);
+    VIEW.ymin = -yr/2; VIEW.ymax = yr/2;
+    refresh();
+  }
+  function sx(x){ return (x - VIEW.xmin) / (VIEW.xmax - VIEW.xmin) * W; }
+  function sy(y){ return H - (y - VIEW.ymin) / (VIEW.ymax - VIEW.ymin) * H; }
+  function wx(px){ return VIEW.xmin + px / W * (VIEW.xmax - VIEW.xmin); }
+  function wy(py){ return VIEW.ymin + (H - py) / H * (VIEW.ymax - VIEW.ymin); }
+
+  // RK4 one step
+  function rk4(x, y, h){
+    var k1 = g(x, y),
+        k2 = g(x + h/2, y + h/2*k1),
+        k3 = g(x + h/2, y + h/2*k2),
+        k4 = g(x + h,   y + h*k3);
+    return y + h/6*(k1 + 2*k2 + 2*k3 + k4);
+  }
+  // integrate from (x0,y0) in one direction until it leaves the frame
+  function integrate(dir){
+    var pts = [], x = x0, y = y0, h = 0.02*dir, guard = 0;
+    pts.push([x,y]);
+    while(guard++ < 4000){
+      var yn = rk4(x, y, h), xn = x + h;
+      if(!isFinite(yn) || Math.abs(yn) > 1e4) break;
+      pts.push([xn, yn]);
+      if(xn < VIEW.xmin-0.2 || xn > VIEW.xmax+0.2 || yn < VIEW.ymin-1.5 || yn > VIEW.ymax+1.5) break;
+      x = xn; y = yn;
+    }
+    return pts;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // axes
+    ctx.strokeStyle = "rgba(180,196,240,0.35)"; ctx.lineWidth = 1.4*DPR; ctx.beginPath();
+    ctx.moveTo(0, sy(0)); ctx.lineTo(W, sy(0));
+    ctx.moveTo(sx(0), 0); ctx.lineTo(sx(0), H); ctx.stroke();
+    ctx.fillStyle = "rgba(150,166,204,0.7)"; ctx.font = (12.5*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for(var tx=Math.ceil(VIEW.xmin); tx<=VIEW.xmax; tx++){ if(tx!==0) ctx.fillText(tx, sx(tx), sy(0)+5); }
+    ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    for(var ty=Math.ceil(VIEW.ymin); ty<=VIEW.ymax; ty++){ if(ty!==0) ctx.fillText(ty, sx(0)+5, sy(ty)); }
+
+    // slope field: a tick at each grid node, length fixed in pixels, angle from the slope
+    var stepX = 0.5, stepY = 0.5, L = 15*DPR;
+    ctx.lineCap = "round";
+    for(var gx = Math.ceil(VIEW.xmin/stepX)*stepX; gx <= VIEW.xmax; gx += stepX){
+      for(var gy = Math.ceil(VIEW.ymin/stepY)*stepY; gy <= VIEW.ymax; gy += stepY){
+        var m = g(gx, gy);
+        var ang = Math.atan(m);                       // screen y is flipped, handle below
+        // direction vector in world, then to screen (dy negative because screen y down)
+        var dx = Math.cos(ang), dy = Math.sin(ang);
+        var pxc = sx(gx), pyc = sy(gy);
+        // scale so the tick is L pixels long regardless of steepness
+        var ex = dx, ey = -dy;                         // screen-space direction
+        var norm = Math.sqrt(ex*ex+ey*ey) || 1; ex/=norm; ey/=norm;
+        var steep = Math.min(1, Math.abs(m)/6);
+        ctx.strokeStyle = "rgba(111,123,176," + (0.35 + 0.35*steep) + ")";
+        ctx.lineWidth = 1.5*DPR;
+        ctx.beginPath();
+        ctx.moveTo(pxc - ex*L/2, pyc - ey*L/2);
+        ctx.lineTo(pxc + ex*L/2, pyc + ey*L/2);
+        ctx.stroke();
+      }
+    }
+
+    // solution curve through the start
+    if(showCurve){
+      var back = integrate(-1).reverse(), fwd = integrate(1);
+      var path = back.concat(fwd.slice(1));
+      ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 3*DPR; ctx.lineJoin = "round"; ctx.beginPath();
+      var pen = false;
+      for(var i=0;i<path.length;i++){
+        var px = sx(path[i][0]), py = sy(path[i][1]);
+        if(!pen){ ctx.moveTo(px, py); pen = true; } else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    // start point
+    ctx.beginPath(); ctx.arc(sx(x0), sy(y0), 7*DPR, 0, Math.PI*2); ctx.fillStyle = getCss('--seed'); ctx.fill();
+    ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(10,14,26,0.75)"; ctx.stroke();
+  }
+
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+
+  function fmt(v){ if(!isFinite(v)) return "—"; if(Math.abs(v)<5e-4) v=0; return (Math.round(v*100)/100).toFixed(2); }
+
+  function refresh(){
+    document.getElementById('x0Val').textContent = fmt(x0);
+    document.getElementById('y0Val').textContent = fmt(y0);
+    document.getElementById('eqbox').firstChild.nodeValue = EQS[ei].tex;
+    document.getElementById('fam').textContent = EQS[ei].fam;
+    document.getElementById('oSeed').textContent = "(" + fmt(x0) + ", " + fmt(y0) + ")";
+    var m = g(x0, y0);
+    document.getElementById('oSlope').textContent = (Math.abs(m) > 999 ? "±∞" : fmt(m));
+    var hint = document.getElementById('hint');
+    hint.innerHTML = 'Every short line shows the slope the equation demands there. The solution curve is the one path that stays <b>tangent to the field at every point</b> — drag the start and a whole new curve appears, one for each constant C.';
+    draw();
+  }
+
+  // ---- interaction ----
+  var X0 = document.getElementById('x0'), Y0 = document.getElementById('y0');
+  X0.addEventListener('input', function(){ x0 = parseFloat(X0.value); refresh(); });
+  Y0.addEventListener('input', function(){ y0 = parseFloat(Y0.value); refresh(); });
+  document.getElementById('showCurve').addEventListener('change', function(e){ showCurve = e.target.checked; refresh(); });
+
+  document.getElementById('eqseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    ei = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    refresh();
+  });
+
+  // click / drag to place the start
+  var dragging = false;
+  function place(ev){
+    var rect = cv.getBoundingClientRect();
+    var px = ((ev.touches?ev.touches[0].clientX:ev.clientX) - rect.left)/rect.width*W;
+    var py = ((ev.touches?ev.touches[0].clientY:ev.clientY) - rect.top)/rect.height*H;
+    x0 = Math.max(-5, Math.min(5, Math.round(wx(px)/0.1)*0.1));
+    y0 = Math.max(-4, Math.min(4, Math.round(wy(py)/0.1)*0.1));
+    X0.value = x0; Y0.value = y0; refresh();
+  }
+  cv.addEventListener('pointerdown', function(ev){ dragging = true; place(ev); });
+  window.addEventListener('pointermove', function(ev){ if(dragging){ ev.preventDefault(); place(ev); } });
+  window.addEventListener('pointerup', function(){ dragging = false; });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

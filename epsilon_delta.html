@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The rigorous definition of a limit as a challenge-and-response game: you pick a tolerance ε around the target, and there must be a window δ around c that keeps the whole curve inside it.">
+<meta name="theme-color" content="#0a0e18">
+<title>The ε–δ Definition &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0;      /* f(x) */
+    --eps:#ffd27a;         /* epsilon band (horizontal) */
+    --del:#b89bff;         /* delta band (vertical) */
+    --bad:#ff8a5b;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(255,210,122,0.08), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(184,155,255,0.08), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--eps);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .plabel.mt{margin-top:22px}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:9px 8px;font:500 12.5px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .seg button:hover{border-color:rgba(255,210,122,.5);color:var(--ink)}
+  .seg button.on{background:rgba(255,210,122,.13);border-color:var(--eps);color:var(--ink)}
+  .seg button .fx{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px}
+
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--eps);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--eps)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--eps);cursor:pointer;border:2px solid #0a0e18}
+  input#delta::-webkit-slider-thumb{background:var(--del);box-shadow:0 0 0 1px var(--del)}
+  input#delta::-moz-range-thumb{background:var(--del)}
+
+  .btnrow{margin-top:14px}
+  .autobtn{width:100%;background:rgba(184,155,255,.14);border:1px solid var(--del);color:var(--ink);
+    border-radius:10px;padding:10px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:.14s}
+  .autobtn:hover{background:rgba(184,155,255,.24)}
+
+  .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
+  .readout .r .v.eps{color:var(--eps)} .readout .r .v.del{color:var(--del)}
+  .verdict{grid-column:1/-1;margin-top:2px;border-radius:11px;padding:11px 13px;font-size:13px;line-height:1.5;border:1px solid var(--line);background:rgba(10,14,26,.4)}
+  .verdict b{color:var(--ink);font-weight:600}
+  .verdict.ok{border-color:rgba(92,214,176,.45);background:rgba(92,214,176,.10)}
+  .verdict.no{border-color:rgba(255,138,91,.45);background:rgba(255,138,91,.09)}
+  .verdict .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+  .verdict.ok .tag{color:var(--accent)} .verdict.no .tag{color:var(--bad)}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .legend .sw{width:15px;height:12px;border-radius:3px}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">The Rigorous Limit</div>
+      <h1>Epsilon &amp; Delta</h1>
+    </div>
+    <p class="sub">A limit, made airtight. You name a tolerance <em>&epsilon;</em> around the target L; the limit exists only
+       if there&rsquo;s always a window <em>&delta;</em> around c keeping every nearby point inside that band.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Function &fnof;(x)</div>
+      <div class="seg" id="fnseg">
+        <button data-i="0" class="on"><span class="fx">x&sup2;</span></button>
+        <button data-i="1"><span class="fx">2x + 1</span></button>
+        <button data-i="2"><span class="fx">sin&nbsp;x</span></button>
+        <button data-i="3"><span class="fx">&radic;x</span></button>
+        <button data-i="4"><span class="fx">1/x</span></button>
+        <button data-i="5">jump step</button>
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label>Target&nbsp;&nbsp;c</label><span class="val" id="cVal">1.00</span></div>
+        <input type="range" id="c" min="-3" max="3" step="0.05" value="1">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Tolerance&nbsp;&nbsp;&epsilon;</label><span class="val eps" id="epsVal">0.60</span></div>
+        <input type="range" id="eps" min="0.05" max="1.5" step="0.01" value="0.6">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Window&nbsp;&nbsp;&delta;</label><span class="val del" id="delVal">0.50</span></div>
+        <input type="range" id="delta" min="0.01" max="2" step="0.01" value="0.5">
+      </div>
+
+      <div class="btnrow"><button class="autobtn" id="auto">Find the largest &delta; that works</button></div>
+
+      <div class="readout">
+        <div class="r"><div class="k">Limit&nbsp;&nbsp;L</div><div class="v" id="oL">&mdash;</div></div>
+        <div class="r"><div class="k">Your &delta;</div><div class="v del" id="oDel">&mdash;</div></div>
+        <div class="r"><div class="k">&epsilon;-band</div><div class="v eps" id="oEps">&mdash;</div></div>
+        <div class="r"><div class="k">Largest &delta; possible</div><div class="v del" id="oBest">&mdash;</div></div>
+        <div class="verdict" id="verdict"><span class="tag">Challenge</span><span id="vtext"></span></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1040"></canvas>
+      <div class="tip">shrink &delta; until the curve stays inside the gold band across the whole purple window</div>
+      <div class="legend">
+        <span class="li"><span class="ln" style="border-color:var(--accent)"></span> &fnof;(x)</span>
+        <span class="li"><span class="sw" style="background:rgba(255,210,122,0.18)"></span> &epsilon;-band (L ± &epsilon;)</span>
+        <span class="li"><span class="sw" style="background:rgba(184,155,255,0.16)"></span> &delta;-window (c ± &delta;)</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FNS = [
+    { name:"x^2",   f:function(x){ return x*x; },        dom:function(){ return true; },   cont:true },
+    { name:"2x+1",  f:function(x){ return 2*x + 1; },    dom:function(){ return true; },   cont:true },
+    { name:"sin x", f:function(x){ return Math.sin(x); },dom:function(){ return true; },   cont:true },
+    { name:"sqrt x",f:function(x){ return Math.sqrt(x); },dom:function(x){ return x>=0; },  cont:true },
+    { name:"1/x",   f:function(x){ return 1/x; },        dom:function(x){ return Math.abs(x)>1e-9; }, cont:true },
+    { name:"jump",  f:function(x){ return x<0 ? x+1 : x-1; }, dom:function(){ return true; }, cont:false }
+  ];
+  var fi = 0, c = 1, eps = 0.6, delta = 0.5;
+
+  function f(x){ return FNS[fi].f(x); }
+  // the target L = the two-sided limit (average of one-sided probes)
+  function limitAt(){
+    var e = 1e-6, fn = FNS[fi];
+    var lft = fn.dom(c-e) ? f(c-e) : NaN, rgt = fn.dom(c+e) ? f(c+e) : NaN;
+    if(!isFinite(lft)) return rgt; if(!isFinite(rgt)) return lft;
+    return (lft+rgt)/2;
+  }
+  function jump(){ // true if one-sided limits disagree (no limit)
+    var e = 1e-6; return Math.abs(f(c-e) - f(c+e)) > 1e-3;
+  }
+  // does this delta keep |f(x)-L| < eps for all 0<|x-c|<delta?
+  function deltaWorks(d, L){
+    var fn = FNS[fi];
+    for(var s=-1;s<=1;s+=0.01){
+      if(Math.abs(s) < 1e-9) continue;
+      var x = c + d*s; if(!fn.dom(x)) continue;
+      if(Math.abs(f(x) - L) > eps + 1e-9) return false;
+    }
+    return true;
+  }
+  function largestDelta(L){
+    var step = 0.005, best = 0;
+    for(var d=step; d<=2; d+=step){ if(deltaWorks(d, L)) best = d; else break; }
+    return best;
+  }
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var VIEW = { xmin:-3, xmax:3, ymin:-3, ymax:3 };
+  var W = cv.width, H = cv.height, DPR = 1;
+
+  function fitDPR(){
+    var ratio0 = 1720/1040, cssW = cv.clientWidth || 860, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height; refresh();
+  }
+  function sx(x){ return (x - VIEW.xmin) / (VIEW.xmax - VIEW.xmin) * W; }
+  function sy(y){ return H - (y - VIEW.ymin) / (VIEW.ymax - VIEW.ymin) * H; }
+
+  function computeView(){
+    VIEW.xmin = c - 3; VIEW.xmax = c + 3;
+    var L = limitAt();
+    var lo = isFinite(L) ? L - 3 : -3, hi = isFinite(L) ? L + 3 : 3;
+    VIEW.ymin = lo; VIEW.ymax = hi;
+  }
+
+  function draw(L, best){
+    computeView();
+    ctx.clearRect(0,0,W,H);
+    var fn = FNS[fi];
+
+    // epsilon band (horizontal)
+    if(isFinite(L)){
+      ctx.fillStyle = "rgba(255,210,122,0.12)";
+      ctx.fillRect(0, sy(L+eps), W, sy(L-eps)-sy(L+eps));
+      ctx.strokeStyle = "rgba(255,210,122,0.5)"; ctx.lineWidth = 1.4*DPR; ctx.setLineDash([6*DPR,5*DPR]);
+      ctx.beginPath(); ctx.moveTo(0, sy(L+eps)); ctx.lineTo(W, sy(L+eps)); ctx.moveTo(0, sy(L-eps)); ctx.lineTo(W, sy(L-eps)); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // delta window (vertical)
+    ctx.fillStyle = "rgba(184,155,255,0.11)";
+    ctx.fillRect(sx(c-delta), 0, sx(c+delta)-sx(c-delta), H);
+    ctx.strokeStyle = "rgba(184,155,255,0.55)"; ctx.lineWidth = 1.4*DPR; ctx.setLineDash([6*DPR,5*DPR]);
+    ctx.beginPath(); ctx.moveTo(sx(c-delta),0); ctx.lineTo(sx(c-delta),H); ctx.moveTo(sx(c+delta),0); ctx.lineTo(sx(c+delta),H); ctx.stroke(); ctx.setLineDash([]);
+
+    // grid axes
+    ctx.strokeStyle = "rgba(180,196,240,0.32)"; ctx.lineWidth = 1.2*DPR; ctx.beginPath();
+    if(sy(0)>=0&&sy(0)<=H){ ctx.moveTo(0, sy(0)); ctx.lineTo(W, sy(0)); }
+    if(sx(0)>=0&&sx(0)<=W){ ctx.moveTo(sx(0), 0); ctx.lineTo(sx(0), H); }
+    ctx.stroke();
+
+    // the box where the curve MUST stay (intersection) — draw its edges bold
+    if(isFinite(L)){
+      ctx.strokeStyle = "rgba(255,255,255,0.16)"; ctx.lineWidth = 1*DPR;
+      ctx.strokeRect(sx(c-delta), sy(L+eps), sx(c+delta)-sx(c-delta), sy(L-eps)-sy(L+eps));
+    }
+
+    // curve — colour the part inside the window red if it escapes the eps band
+    plotCurveSegmented(L);
+
+    // c marker + L marker
+    ctx.fillStyle = "rgba(150,166,204,0.85)"; ctx.font = (13*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText("c", sx(c), H-22*DPR);
+    if(isFinite(L)){ dot(c, L, getCss('--eps')); }
+  }
+
+  function plotCurveSegmented(L){
+    var fn = FNS[fi], N = 1400, prevX=null, prevY=null;
+    for(var i=0;i<=N;i++){
+      var x = VIEW.xmin + (VIEW.xmax-VIEW.xmin)*i/N;
+      if(!fn.dom(x)){ prevX=null; continue; }
+      var y = f(x); if(!isFinite(y) || Math.abs(y)>1e4){ prevX=null; continue; }
+      if(prevX!==null){
+        var inWin = (x >= c-delta && x <= c+delta);
+        var escapes = inWin && isFinite(L) && (Math.abs(y-L) > eps);
+        ctx.strokeStyle = escapes ? getCss('--bad') : getCss('--accent');
+        ctx.lineWidth = (escapes?3.4:3.0)*DPR; ctx.lineJoin="round";
+        ctx.beginPath(); ctx.moveTo(sx(prevX), sy(prevY)); ctx.lineTo(sx(x), sy(y)); ctx.stroke();
+      }
+      prevX = x; prevY = y;
+    }
+  }
+  function dot(x, y, fill){ ctx.beginPath(); ctx.arc(sx(x), sy(y), 6*DPR, 0, Math.PI*2); ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth=2*DPR; ctx.strokeStyle="rgba(10,14,26,0.7)"; ctx.stroke(); }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+  function fmt(v, d){ if(!isFinite(v)) return "—"; d=(d==null?3:d); if(Math.abs(v)<5e-4) v=0; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+  function refresh(){
+    document.getElementById('cVal').textContent = fmt(c,2);
+    document.getElementById('epsVal').textContent = fmt(eps,2);
+    document.getElementById('delVal').textContent = fmt(delta,2);
+
+    var L = limitAt(), noLimit = jump() || !isFinite(L);
+    var best = noLimit ? 0 : largestDelta(L);
+    var works = !noLimit && deltaWorks(delta, L);
+
+    document.getElementById('oL').textContent = noLimit ? "none" : fmt(L,3);
+    document.getElementById('oDel').textContent = fmt(delta,2);
+    document.getElementById('oEps').textContent = noLimit ? "—" : (fmt(L-eps,2) + " … " + fmt(L+eps,2));
+    document.getElementById('oBest').textContent = noLimit ? "0" : fmt(best,3);
+
+    var v = document.getElementById('verdict'), vt = document.getElementById('vtext');
+    if(noLimit){
+      v.className = "verdict no";
+      vt.innerHTML = 'The two sides of <b>c</b> head to different values, so no single L exists. For a small enough ε <b>no δ can ever work</b> — the limit fails the test, exactly as it should.';
+    } else if(works){
+      v.className = "verdict ok";
+      vt.innerHTML = 'Met! Across the whole window <b>c ± ' + fmt(delta,2) + '</b> the curve stays inside <b>L ± ε</b>. You could go as wide as <b>δ = ' + fmt(best,3) + '</b> and still succeed.';
+    } else {
+      v.className = "verdict no";
+      vt.innerHTML = 'Too wide — near the window&rsquo;s edge the curve (shown red) escapes the ε-band. Shrink δ below <b>' + fmt(best,3) + '</b> and the challenge is met.';
+    }
+    draw(L, best);
+  }
+
+  // ---- interaction ----
+  var C = document.getElementById('c'), E = document.getElementById('eps'), D = document.getElementById('delta');
+  C.addEventListener('input', function(){ c = parseFloat(C.value); if(FNS[fi].name==="sqrt x" && c<0.3){ c=0.3; C.value=c; } if(FNS[fi].name==="1/x" && Math.abs(c)<0.3){ c = c<0?-0.3:0.3; C.value=c; } refresh(); });
+  E.addEventListener('input', function(){ eps = parseFloat(E.value); refresh(); });
+  D.addEventListener('input', function(){ delta = parseFloat(D.value); refresh(); });
+  document.getElementById('auto').addEventListener('click', function(){
+    var L = limitAt(); if(jump() || !isFinite(L)) return;
+    var best = largestDelta(L); delta = Math.max(0.01, best); D.value = delta; refresh();
+  });
+
+  document.getElementById('fnseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    fi = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    if(FNS[fi].name==="sqrt x" && c<0.3){ c=1; C.value=c; }
+    if(FNS[fi].name==="1/x" && Math.abs(c)<0.3){ c=1; C.value=c; }
+    if(FNS[fi].name==="jump"){ c=0; C.value=c; }
+    refresh();
+  });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

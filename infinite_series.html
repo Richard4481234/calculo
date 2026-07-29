@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Add up infinitely many terms and see whether the running total settles on a number or wanders off forever. Geometric, p-series, alternating, harmonic — convergence made visible.">
+<meta name="theme-color" content="#0a0e18">
+<title>Infinite Series &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --accent:#5cd6b0;      /* partial sums */
+    --term:#b89bff;        /* individual terms */
+    --limit:#ffd27a;       /* the limit */
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(184,155,255,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .plabel.mt{margin-top:22px}
+
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+    padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;text-align:center}
+  .seg button:hover{border-color:rgba(92,214,176,.5);color:var(--ink)}
+  .seg button.on{background:rgba(92,214,176,.14);border-color:var(--accent);color:var(--ink)}
+
+  .ctl{margin-top:16px}
+  .ctl.hidden{display:none}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18}
+
+  .formula{margin-top:16px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;
+    padding:12px 13px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--term);text-align:center}
+
+  .readout{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
+  .readout .r .v.sum{color:var(--accent)} .readout .r .v.lim{color:var(--limit)}
+  .readout .r.full{grid-column:1 / -1}
+  .verdict{grid-column:1/-1;margin-top:2px;border-radius:11px;padding:11px 13px;font-size:13px;line-height:1.5;border:1px solid var(--line);background:rgba(10,14,26,.4)}
+  .verdict b{font-weight:600;color:var(--ink)}
+  .verdict.conv{border-color:rgba(92,214,176,.45);background:rgba(92,214,176,.10)}
+  .verdict.div{border-color:rgba(255,138,91,.45);background:rgba(255,138,91,.09)}
+  .verdict .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+  .verdict.conv .tag{color:var(--accent)} .verdict.div .tag{color:#ff8a5b}
+
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .legend .dt{width:11px;height:11px;border-radius:50%}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">Sequences &amp; Series</div>
+      <h1>Adding Up Forever</h1>
+    </div>
+    <p class="sub">Pile up infinitely many terms. Sometimes the running total <em>settles</em> on a finite number;
+       sometimes it wanders off without bound. Watch the partial sums and see which fate awaits.</p>
+  </header>
+
+  <div class="stage">
+
+    <aside class="panel">
+      <div class="plabel">Series &Sigma; a&#8342;</div>
+      <div class="seg" id="serseg">
+        <button data-i="0" class="on">geometric&nbsp;rᵏ</button>
+        <button data-i="1">p-series&nbsp;1/kᵖ</button>
+        <button data-i="2">harmonic&nbsp;1/k</button>
+        <button data-i="3">alternating</button>
+        <button data-i="4">telescoping</button>
+        <button data-i="5">1/k!</button>
+      </div>
+
+      <div class="ctl hidden" id="rCtl">
+        <div class="row"><label>Ratio&nbsp;&nbsp;r</label><span class="val" id="rVal">0.60</span></div>
+        <input type="range" id="r" min="-0.95" max="0.95" step="0.01" value="0.6">
+      </div>
+      <div class="ctl hidden" id="pCtl">
+        <div class="row"><label>Power&nbsp;&nbsp;p</label><span class="val" id="pValp">2.00</span></div>
+        <input type="range" id="p" min="0.3" max="3" step="0.05" value="2">
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label>Terms&nbsp;&nbsp;n</label><span class="val" id="nVal">20</span></div>
+        <input type="range" id="n" min="1" max="120" step="1" value="20">
+      </div>
+
+      <div class="formula" id="formula">&mdash;</div>
+
+      <div class="readout">
+        <div class="r"><div class="k">Partial sum&nbsp;&nbsp;S&#8345;</div><div class="v sum" id="oSum">&mdash;</div></div>
+        <div class="r"><div class="k">Converges to</div><div class="v lim" id="oLim">&mdash;</div></div>
+        <div class="r"><div class="k">Last term&nbsp;&nbsp;a&#8345;</div><div class="v" id="oTerm">&mdash;</div></div>
+        <div class="r"><div class="k">Tail left</div><div class="v" id="oTail">&mdash;</div></div>
+        <div class="verdict" id="verdict"><span class="tag">Verdict</span><span id="vtext"></span></div>
+      </div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1080"></canvas>
+      <div class="tip">each dot is a partial sum Sₙ &middot; bars are the terms aₖ</div>
+      <div class="legend">
+        <span class="li"><span class="dt" style="background:var(--accent)"></span> partial sum Sₙ</span>
+        <span class="li"><span class="ln" style="border-color:var(--term)"></span> term aₖ</span>
+        <span class="li"><span class="ln" style="border-color:var(--limit)"></span> limit</span>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  // each series: term(k) for k>=1, a limit (or null if divergent), a label, and the closed form
+  var SERIES = [
+    { id:"geo",  needs:"r",
+      term:function(k){ return Math.pow(r, k-1); },
+      limit:function(){ return Math.abs(r) < 1 ? 1/(1-r) : null; },
+      formula:function(){ return "Σ rᵏ⁻¹ = 1 + r + r² + …"; },
+      note:function(){ return Math.abs(r)<1 ? "|r| < 1, so it converges to 1/(1−r)." : "|r| ≥ 1, so terms don't shrink — it diverges."; } },
+    { id:"p",    needs:"p",
+      term:function(k){ return 1/Math.pow(k, p); },
+      limit:function(){ return p > 1 ? zeta(p) : null; },
+      formula:function(){ return "Σ 1/kᵖ = 1 + 1/2ᵖ + 1/3ᵖ + …"; },
+      note:function(){ return p>1 ? "p > 1, so the p-series converges." : "p ≤ 1, so it diverges (the terms shrink too slowly)."; } },
+    { id:"harm", needs:null,
+      term:function(k){ return 1/k; },
+      limit:function(){ return null; },
+      formula:function(){ return "Σ 1/k = 1 + 1/2 + 1/3 + …"; },
+      note:function(){ return "The harmonic series diverges — famously, though ever so slowly."; } },
+    { id:"alt",  needs:null,
+      term:function(k){ return Math.pow(-1, k+1)/k; },
+      limit:function(){ return Math.LN2; },
+      formula:function(){ return "Σ (−1)ᵏ⁺¹/k = 1 − 1/2 + 1/3 − …"; },
+      note:function(){ return "Alternating signs rescue it: it converges to ln 2, homing in from both sides."; } },
+    { id:"tele", needs:null,
+      term:function(k){ return 1/(k*(k+1)); },
+      limit:function(){ return 1; },
+      formula:function(){ return "Σ 1/[k(k+1)] = 1/2 + 1/6 + …"; },
+      note:function(){ return "Each term splits as 1/k − 1/(k+1); the middle cancels and it telescopes to 1."; } },
+    { id:"fact", needs:null,
+      term:function(k){ return 1/fact(k); },
+      limit:function(){ return Math.E - 1; },
+      formula:function(){ return "Σ 1/k! = 1 + 1/2 + 1/6 + …"; },
+      note:function(){ return "Factorials crush the terms fast — it races to e − 1."; } }
+  ];
+  var si = 0, r = 0.6, p = 2, n = 20;
+  function fact(k){ var f=1; for(var i=2;i<=k;i++) f*=i; return f; }
+  function zeta(s){ var t=0; for(var k=1;k<=200000;k++) t += 1/Math.pow(k,s); return t; }  // numeric, plenty for display
+
+  function partials(){
+    var S = SERIES[si], arr = [], sum = 0;
+    for(var k=1;k<=n;k++){ sum += S.term(k); arr.push(sum); }
+    return arr;
+  }
+
+  // ---- canvas ----
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height, DPR = 1;
+
+  function fitDPR(){
+    var ratio0 = 1720/1080, cssW = cv.clientWidth || 860, cssH = Math.round(cssW/ratio0);
+    var dpr = window.devicePixelRatio || 1; DPR = dpr;
+    cv.width = Math.round(cssW*dpr); cv.height = Math.round(cssH*dpr);
+    W = cv.width; H = cv.height; refresh();
+  }
+
+  var padL = 62, padR = 24, padT = 26, padB = 40;
+  function plotW(){ return W - (padL+padR)*DPR; }
+  function plotH(){ return H - (padT+padB)*DPR; }
+
+  function draw(sums, lim){
+    ctx.clearRect(0,0,W,H);
+    var S = SERIES[si];
+
+    // y range from sums + terms + limit
+    var vals = sums.slice();
+    if(lim !== null) vals.push(lim);
+    for(var k=1;k<=n;k++) vals.push(S.term(k));
+    var ymin = Math.min(0, Math.min.apply(null, vals));
+    var ymax = Math.max.apply(null, vals);
+    var span = (ymax - ymin) || 1; ymin -= span*0.08; ymax += span*0.1;
+
+    var x0 = padL*DPR, y1 = padT*DPR, pw = plotW(), ph = plotH();
+    function PX(i){ return x0 + (n<=1?0.5:(i/(n-1))) * pw; }   // i = 0..n-1
+    function PY(v){ return y1 + (1 - (v - ymin)/(ymax - ymin)) * ph; }
+
+    // gridlines + y labels
+    ctx.strokeStyle = "rgba(140,160,220,0.09)"; ctx.lineWidth = 1*DPR;
+    ctx.fillStyle = "rgba(150,166,204,0.7)"; ctx.font = (12.5*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    var ticks = 5;
+    for(var t=0;t<=ticks;t++){
+      var v = ymin + (ymax-ymin)*t/ticks, py = PY(v);
+      ctx.beginPath(); ctx.moveTo(x0, py); ctx.lineTo(x0+pw, py); ctx.stroke();
+      ctx.fillText((Math.round(v*100)/100).toFixed(2), x0-8*DPR, py);
+    }
+
+    // zero axis
+    if(ymin < 0 && ymax > 0){
+      ctx.strokeStyle = "rgba(180,196,240,0.35)"; ctx.lineWidth = 1.4*DPR;
+      ctx.beginPath(); ctx.moveTo(x0, PY(0)); ctx.lineTo(x0+pw, PY(0)); ctx.stroke();
+    }
+
+    // limit line
+    if(lim !== null){
+      ctx.strokeStyle = getCss('--limit'); ctx.lineWidth = 1.8*DPR; ctx.setLineDash([7*DPR,6*DPR]);
+      ctx.beginPath(); ctx.moveTo(x0, PY(lim)); ctx.lineTo(x0+pw, PY(lim)); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // term bars
+    ctx.fillStyle = "rgba(184,155,255,0.5)";
+    var bw = Math.max(1.5*DPR, pw/n*0.32);
+    for(var i=0;i<n;i++){
+      var a = S.term(i+1), px = PX(i);
+      var top = PY(a), base = PY(0);
+      ctx.fillRect(px - bw/2, Math.min(top,base), bw, Math.abs(base-top));
+    }
+
+    // partial-sum polyline + dots
+    ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 2.4*DPR; ctx.lineJoin = "round"; ctx.beginPath();
+    for(var j=0;j<sums.length;j++){ var X=PX(j), Y=PY(sums[j]); if(j===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke();
+    var dotEvery = n > 60 ? 3 : 1;
+    for(var m=0;m<sums.length;m++){
+      if(m % dotEvery !== 0 && m !== sums.length-1) continue;
+      ctx.beginPath(); ctx.arc(PX(m), PY(sums[m]), (m===sums.length-1?6:3.2)*DPR, 0, Math.PI*2);
+      ctx.fillStyle = m===sums.length-1 ? "#ffffff" : getCss('--accent');
+      ctx.fill();
+      if(m===sums.length-1){ ctx.lineWidth=2*DPR; ctx.strokeStyle=getCss('--accent'); ctx.stroke(); }
+    }
+
+    // x labels
+    ctx.fillStyle = "rgba(150,166,204,0.7)"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillText("n = 1", x0, y1+ph+8*DPR);
+    ctx.fillText("n = "+n, x0+pw, y1+ph+8*DPR);
+  }
+
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+  function fmt(v, d){ if(v===null||!isFinite(v)) return "—"; d=(d==null?4:d); return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+  function refresh(){
+    var S = SERIES[si];
+    document.getElementById('rCtl').classList.toggle('hidden', S.needs !== "r");
+    document.getElementById('pCtl').classList.toggle('hidden', S.needs !== "p");
+    document.getElementById('rVal').textContent = fmt(r,2);
+    document.getElementById('pValp').textContent = fmt(p,2);
+    document.getElementById('nVal').textContent = n;
+    document.getElementById('formula').textContent = S.formula();
+
+    var sums = partials(), Sn = sums[sums.length-1], lim = S.limit(), an = S.term(n);
+    document.getElementById('oSum').textContent = fmt(Sn, 5);
+    document.getElementById('oLim').textContent = lim===null ? "diverges" : fmt(lim, 5);
+    document.getElementById('oTerm').textContent = fmt(an, 5);
+    document.getElementById('oTail').textContent = lim===null ? "—" : fmt(Math.abs(lim - Sn), 5);
+
+    var v = document.getElementById('verdict'), vt = document.getElementById('vtext');
+    if(lim === null){ v.className = "verdict div"; vt.innerHTML = S.note(); }
+    else { v.className = "verdict conv"; vt.innerHTML = S.note(); }
+
+    draw(sums, lim);
+  }
+
+  // ---- interaction ----
+  var R = document.getElementById('r'), P = document.getElementById('p'), N = document.getElementById('n');
+  R.addEventListener('input', function(){ r = parseFloat(R.value); refresh(); });
+  P.addEventListener('input', function(){ p = parseFloat(P.value); refresh(); });
+  N.addEventListener('input', function(){ n = parseInt(N.value,10); refresh(); });
+
+  document.getElementById('serseg').addEventListener('click', function(e){
+    var btn = e.target.closest('button'); if(!btn) return;
+    si = parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    btn.classList.add('on');
+    refresh();
+  });
+
+  window.addEventListener('resize', fitDPR);
+  fitDPR();
+})();
+</script>
+</body>
+</html>

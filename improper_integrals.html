@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Can an infinitely long region hold a finite area? Push the boundary toward infinity and watch the running total either settle on a number (converge) or grow without bound (diverge).">
+<meta name="theme-color" content="#0a0e18">
+<title>Improper Integrals &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.6);--line:rgba(140,160,220,0.16);--ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--fill:#ff8a5b;--limit:#ffd27a;--r:16px;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(255,138,91,0.09),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(92,214,176,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)}.back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--fill);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}.sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .seg{display:grid;grid-template-columns:1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:10px 11px;font-family:'JetBrains Mono',monospace;font-size:12.5px;cursor:pointer;transition:.14s;text-align:left;display:flex;justify-content:space-between;gap:8px}
+  .seg button:hover{border-color:rgba(255,138,91,.5);color:var(--ink)}.seg button.on{background:rgba(255,138,91,.12);border-color:var(--fill);color:var(--ink)}
+  .seg button .tag{color:var(--faint);font-size:10px}
+  .ctl{margin-top:16px}.ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}.ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--fill);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--fill)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--fill);cursor:pointer;border:2px solid #0a0e18}
+  .autobtn{margin-top:13px;width:100%;background:rgba(255,138,91,.14);border:1px solid var(--fill);color:var(--ink);border-radius:10px;padding:10px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:.14s}
+  .autobtn:hover{background:rgba(255,138,91,.24)}
+  .readout{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:17px;color:var(--ink);margin-top:3px}
+  .readout .r .v.fill{color:var(--fill)}.readout .r .v.lim{color:var(--limit)}
+  .verdict{grid-column:1/-1;margin-top:2px;border-radius:11px;padding:11px 13px;font-size:13px;line-height:1.5;border:1px solid var(--line);background:rgba(10,14,26,.4)}
+  .verdict b{color:var(--ink);font-weight:600}
+  .verdict.conv{border-color:rgba(92,214,176,.45);background:rgba(92,214,176,.10)}.verdict.div{border-color:rgba(255,138,91,.45);background:rgba(255,138,91,.09)}
+  .verdict .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+  .verdict.conv .tag{color:var(--accent)}.verdict.div .tag{color:var(--fill)}
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}.legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}.legend .sw{width:14px;height:12px;border-radius:3px}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+  <header class="head">
+    <div><a class="back" href="index.html">&larr; Calculo</a><div class="kicker">Improper Integrals</div><h1>Area Out to Infinity</h1></div>
+    <p class="sub">Can a region that never ends still hold a <em>finite</em> area? Push the boundary outward and watch the
+       running total either <em>settle</em> on a number — or climb forever.</p>
+  </header>
+  <div class="stage">
+    <aside class="panel">
+      <div class="plabel">Integral</div>
+      <div class="seg" id="exseg">
+        <button data-i="0" class="on"><span>∫₁<sup>∞</sup> 1/x^p dx</span><span class="tag" id="pt0">p&gt;1?</span></button>
+        <button data-i="1"><span>∫₀<sup>∞</sup> e^(−x) dx</span><span class="tag">→ 1</span></button>
+        <button data-i="2"><span>∫₀<sup>∞</sup> 1/(1+x²) dx</span><span class="tag">→ π/2</span></button>
+        <button data-i="3"><span>∫₀<sup>∞</sup> x·e^(−x) dx</span><span class="tag">→ 1</span></button>
+        <button data-i="4"><span>∫₁<sup>∞</sup> 1/x dx</span><span class="tag">diverges</span></button>
+        <button data-i="5"><span>∫₀<sup>1</sup> 1/√x dx</span><span class="tag">→ 2 (0 is bad)</span></button>
+      </div>
+
+      <div class="ctl" id="pCtl" style="display:none"><div class="row"><label>Power&nbsp;&nbsp;p</label><span class="val" id="pVal">2.00</span></div><input type="range" id="p" min="0.3" max="3" step="0.05" value="2"></div>
+      <div class="ctl"><div class="row"><label id="reachLab">Boundary&nbsp;&nbsp;B → ∞</label><span class="val" id="reachVal">10</span></div><input type="range" id="reach" min="0" max="1" step="0.001" value="0.45"></div>
+      <button class="autobtn" id="auto">Push the boundary out</button>
+
+      <div class="readout">
+        <div class="r"><div class="k" id="kBound">Boundary B</div><div class="v" id="oB">&mdash;</div></div>
+        <div class="r"><div class="k">Area so far</div><div class="v fill" id="oPartial">&mdash;</div></div>
+        <div class="r"><div class="k">Limit value</div><div class="v lim" id="oLim">&mdash;</div></div>
+        <div class="r"><div class="k">Still to gain</div><div class="v" id="oTail">&mdash;</div></div>
+        <div class="verdict" id="verdict"><span class="tag">Verdict</span><span id="vtext"></span></div>
+      </div>
+    </aside>
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1000"></canvas>
+      <div class="tip" id="tip">the shaded area keeps growing — does it stop?</div>
+      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> f(x)</span><span class="li"><span class="sw" style="background:rgba(255,138,91,0.2)"></span> area to B</span><span class="li"><span class="ln" style="border-color:var(--limit)"></span> limit</span></div>
+    </div>
+  </div>
+<script>
+(function(){
+  "use strict";
+  // each: f, closed-form partial P(x) = antiderivative so exact area = P(B)-P(a); limit (null=diverges); mode
+  var EX=[
+    { mode:"upper", a:1, f:function(x){return 1/Math.pow(x,pP);}, P:function(x){return pP===1?Math.log(x):Math.pow(x,1-pP)/(1-pP);},
+      limit:function(){return pP>1?1/(pP-1):null;}, hasP:true },
+    { mode:"upper", a:0, f:function(x){return Math.exp(-x);}, P:function(x){return -Math.exp(-x);}, limit:function(){return 1;} },
+    { mode:"upper", a:0, f:function(x){return 1/(1+x*x);}, P:function(x){return Math.atan(x);}, limit:function(){return Math.PI/2;} },
+    { mode:"upper", a:0, f:function(x){return x*Math.exp(-x);}, P:function(x){return -(x+1)*Math.exp(-x);}, limit:function(){return 1;} },
+    { mode:"upper", a:1, f:function(x){return 1/x;}, P:function(x){return Math.log(x);}, limit:function(){return null;} },
+    { mode:"lower", a:0, b:1, f:function(x){return 1/Math.sqrt(x);}, P:function(x){return 2*Math.sqrt(x);}, limit:function(){return 2;} }
+  ];
+  var ei=0, pP=2, reach=0.45, animId=null;
+  function ex(){ return EX[ei]; }
+  // boundary from reach 0..1
+  function boundB(){ var e=ex(); if(e.mode==="upper"){ return e.a + Math.tan(Math.min(0.9995,reach)*Math.PI/2)* (e.a===0?2.2:1.6) + 0.3; } else { return 0; } }
+  function epsLow(){ return 0.5*Math.pow(0.0008/0.5, reach); } // shrinks from 0.5 toward ~0
+  function partial(){ var e=ex(); if(e.mode==="upper"){ var B=boundB(); return e.P(B)-e.P(e.a); } else { var eps=epsLow(); return e.P(e.b)-e.P(eps); } }
+
+  var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,DPR=1;
+  var VX={min:-0.5,max:12}, VY={min:-0.2,max:3};
+  function fitDPR(){var r0=1720/1000,cw=cv.clientWidth||860,ch=Math.round(cw/r0),dpr=window.devicePixelRatio||1;DPR=dpr;cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);W=cv.width;H=cv.height;refresh();}
+  function sx(x){return (x-VX.min)/(VX.max-VX.min)*W;} function sy(y){return H-(y-VY.min)/(VY.max-VY.min)*H;}
+  function setView(){var e=ex();
+    if(e.mode==="upper"){ VX.min=-0.5; VX.max=12; } else { VX.min=-0.1; VX.max=1.15; }
+    var ymx=1;for(var i=0;i<=200;i++){var x=(e.mode==="upper"?e.a:Math.max(0.02,epsLow()))+(VX.max-(e.mode==="upper"?e.a:0))*i/200;var y=e.f(Math.max(0.01,x));if(isFinite(y))ymx=Math.max(ymx,y);}
+    ymx=Math.min(ymx,6); VY.min=-0.15; VY.max=ymx*1.15;
+  }
+  function draw(){
+    setView();ctx.clearRect(0,0,W,H);var e=ex();
+    // grid + axes
+    ctx.lineWidth=1*DPR;ctx.strokeStyle="rgba(140,160,220,0.08)";ctx.beginPath();
+    for(var gx=Math.ceil(VX.min);gx<=VX.max;gx++){ctx.moveTo(sx(gx),0);ctx.lineTo(sx(gx),H);}ctx.stroke();
+    ctx.strokeStyle="rgba(180,196,240,0.4)";ctx.lineWidth=1.4*DPR;ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(W,sy(0));ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),H);ctx.stroke();
+    ctx.fillStyle="rgba(150,166,204,0.7)";ctx.font=(13*DPR)+"px 'JetBrains Mono', monospace";ctx.textAlign="center";ctx.textBaseline="top";
+    for(var tx=Math.ceil(VX.min);tx<=VX.max;tx++){if(tx!==0)ctx.fillText(tx,sx(tx),sy(0)+6);}
+    // shaded area
+    var lo=e.mode==="upper"?e.a:epsLow(), hi=e.mode==="upper"?Math.min(boundB(),VX.max):e.b;
+    ctx.beginPath();var started=false;
+    for(var i=0;i<=500;i++){var x=lo+(hi-lo)*i/500;var y=e.f(Math.max(1e-4,x));if(!isFinite(y))continue;y=Math.min(y,VY.max*1.2);if(!started){ctx.moveTo(sx(x),sy(0));ctx.lineTo(sx(x),sy(y));started=true;}else ctx.lineTo(sx(x),sy(y));}
+    if(started){ctx.lineTo(sx(hi),sy(0));ctx.closePath();ctx.fillStyle="rgba(255,138,91,0.20)";ctx.fill();}
+    // limit line (finite cases)
+    var L=e.limit();
+    // boundary marker
+    if(e.mode==="upper"){var B=boundB();
+      if(B<=VX.max){ctx.strokeStyle="rgba(255,138,91,0.6)";ctx.lineWidth=1.6*DPR;ctx.setLineDash([5*DPR,4*DPR]);ctx.beginPath();ctx.moveTo(sx(B),0);ctx.lineTo(sx(B),H);ctx.stroke();ctx.setLineDash([]);}
+      else{ // arrow: area continues beyond view
+        ctx.fillStyle=getCss('--fill');ctx.font=(13*DPR)+"px 'JetBrains Mono', monospace";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText("B = "+(B>1e6?"huge":Math.round(B))+"  →",W-14*DPR,26*DPR);}
+    } else {
+      var eps=epsLow();ctx.strokeStyle="rgba(255,138,91,0.6)";ctx.lineWidth=1.6*DPR;ctx.setLineDash([5*DPR,4*DPR]);ctx.beginPath();ctx.moveTo(sx(eps),0);ctx.lineTo(sx(eps),H);ctx.stroke();ctx.setLineDash([]);
+    }
+    // curve
+    plot(function(x){return e.f(x);}, getCss('--accent'), 3.0, e.mode==="upper"?e.a:0.001);
+  }
+  function plot(g,color,lw,x0){ctx.strokeStyle=color;ctx.lineWidth=lw*DPR;ctx.lineJoin="round";ctx.beginPath();var N=1000,pen=false,prevY=null;
+    for(var i=0;i<=N;i++){var x=Math.max(x0,VX.min)+ (VX.max-Math.max(x0,VX.min))*i/N;var y=g(x);if(!isFinite(y)||y>1e4){pen=false;continue;}var py=sy(Math.min(y,VY.max*1.3));if(pen&&prevY!==null&&Math.abs(py-prevY)>H*1.2)pen=false;if(!pen){ctx.moveTo(sx(x),py);pen=true;}else ctx.lineTo(sx(x),py);prevY=py;}ctx.stroke();}
+  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0";}
+  function fmt(v,d){if(v===null)return "diverges";if(!isFinite(v))return "∞";d=(d==null?4:d);return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+
+  function refresh(){
+    var e=ex();
+    document.getElementById('pCtl').style.display = e.hasP ? "" : "none";
+    document.getElementById('pVal').textContent=fmt(pP,2);
+    document.getElementById('reachLab').textContent = e.mode==="upper" ? "Boundary  B → ∞" : "Lower cutoff  ε → 0";
+    if(e.hasP) document.getElementById('pt0').textContent = pP>1?"converges":"diverges";
+    var part=partial(), L=e.limit();
+    document.getElementById('kBound').textContent = e.mode==="upper" ? "Boundary B" : "Cutoff ε";
+    var Bdisp = e.mode==="upper" ? (boundB()>1e6?"huge":fmt(boundB(),2)) : fmt(epsLow(),4);
+    document.getElementById('reachVal').textContent = e.mode==="upper" ? (boundB()>1e5?"1e5+":Math.round(boundB())) : fmt(epsLow(),3);
+    document.getElementById('oB').textContent=Bdisp;
+    document.getElementById('oPartial').textContent=fmt(part,4);
+    document.getElementById('oLim').textContent=L===null?"diverges":fmt(L,4);
+    document.getElementById('oTail').textContent=L===null?"grows ∞":fmt(Math.abs(L-part),4);
+    var v=document.getElementById('verdict'),vt=document.getElementById('vtext');
+    if(L===null){ v.className="verdict div"; vt.innerHTML="Push B outward and the area keeps <b>climbing without bound</b>. The integral <b>diverges</b> — even though f(x)→0, it doesn&rsquo;t shrink fast enough."; }
+    else { v.className="verdict conv"; vt.innerHTML="The area <b>converges</b> to <b>"+fmt(L,4)+"</b>. No matter how far the boundary goes, the total never exceeds this — an infinite region with finite area."; }
+    draw();
+  }
+  var P=document.getElementById('p'),Re=document.getElementById('reach');
+  P.addEventListener('input',function(){pP=parseFloat(P.value);refresh();});
+  Re.addEventListener('input',function(){stopAnim();reach=parseFloat(Re.value);refresh();});
+  function stopAnim(){if(animId){cancelAnimationFrame(animId);animId=null;document.getElementById('auto').textContent="Push the boundary out";}}
+  document.getElementById('auto').addEventListener('click',function(){if(animId){stopAnim();return;}this.textContent="Pause";if(reach>=0.995)reach=0.2;
+    var step=function(){reach+=0.006;if(reach>=0.9){reach=0.9;Re.value=reach;refresh();stopAnim();return;}Re.value=reach;refresh();animId=requestAnimationFrame(step);};animId=requestAnimationFrame(step);});
+  document.getElementById('exseg').addEventListener('click',function(e){var btn=e.target.closest('button');if(!btn)return;stopAnim();ei=parseInt(btn.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.classList.remove('on');});btn.classList.add('on');reach=0.45;Re.value=0.45;refresh();});
+  window.addEventListener('resize',fitDPR);fitDPR();
+})();
+</script>
+</body>
+</html>

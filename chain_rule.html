@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A composite function is a pipeline: x flows through g, then through f. The chain rule says the overall rate is the product of the rates at each stage — f'(g(x)) times g'(x).">
+<meta name="theme-color" content="#0a0e18">
+<title>The Chain Rule &middot; Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
+    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
+    --comp:#5cd6b0; --inner:#b89bff; --outer:#ff8a5b; --tan:#ffd27a;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(1100px 640px at 82% -10%, rgba(184,155,255,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(255,138,91,0.07), transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed; min-height:100vh; color:var(--ink); font-family:'Inter',system-ui,sans-serif;}
+  a{color:inherit;text-decoration:none}
+  .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .back{font-size:13px;color:var(--muted)} .back:hover{color:var(--ink)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--inner);margin-top:12px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em;line-height:1.04;margin:8px 0 0}
+  .sub{color:var(--muted);font-size:14.5px;max-width:520px;text-align:right;line-height:1.55}
+  .sub em{font-style:italic;color:var(--ink)}
+  @media(max-width:760px){.sub{text-align:left}}
+  .stage{max-width:1220px;margin:14px auto 0;padding:0 26px 60px;display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
+  .seg button:hover{border-color:rgba(184,155,255,.5);color:var(--ink)}
+  .seg button.on{background:rgba(184,155,255,.14);border-color:var(--inner);color:var(--ink)}
+  .ctl{margin-top:16px}
+  .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+  .ctl .row label{font-size:13px;color:var(--muted)}
+  .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--tan);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--tan)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--tan);cursor:pointer;border:2px solid #0a0e18}
+  .pipe{margin-top:16px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;padding:13px;display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .pipe .node{text-align:center;color:var(--ink)}
+  .pipe .node .lb{font-size:9.5px;color:var(--faint);letter-spacing:.1em}
+  .pipe .op{color:var(--inner);font-size:11px}
+  .pipe .op.f{color:var(--outer)}
+  .pipe .arrow{color:var(--faint)}
+  .chain{margin-top:14px;background:rgba(10,14,26,.5);border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-family:'JetBrains Mono',monospace;font-size:13.5px;text-align:center;line-height:1.7}
+  .chain .a{color:var(--outer)} .chain .b{color:var(--inner)} .chain .r{color:var(--tan)}
+  .readout{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+  .readout .hint{font-size:12px;color:var(--muted);line-height:1.55}
+  .readout .hint b{color:var(--ink);font-weight:600}
+  .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none;cursor:grab}
+  canvas.drag{cursor:grabbing}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;padding:12px 6px 2px;font-size:12.5px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .ln{width:20px;height:0;border-top:3px solid;border-radius:2px}
+  .tip{position:absolute;top:20px;left:22px;font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;pointer-events:none}
+</style>
+</head>
+<body>
+  <header class="head">
+    <div>
+      <a class="back" href="index.html">&larr; Calculo</a>
+      <div class="kicker">The Chain Rule</div>
+      <h1>Rates that Multiply</h1>
+    </div>
+    <p class="sub">A composite h(x) = f(g(x)) is a two-stage pipeline. If the inner stage moves <em>g&prime;</em> times as fast
+       and the outer stage amplifies by <em>f&prime;</em>, the whole thing runs at their <em>product</em>.</p>
+  </header>
+
+  <div class="stage">
+    <aside class="panel">
+      <div class="plabel">Composite&nbsp;&nbsp;h(x) = f(g(x))</div>
+      <div class="seg" id="fnseg">
+        <button data-i="0" class="on">sin(x²)</button>
+        <button data-i="1">(sin x)²</button>
+        <button data-i="2">e^(−x²)</button>
+        <button data-i="3">√(x²+1)</button>
+        <button data-i="4">sin(2x)</button>
+        <button data-i="5">(½x+1)³</button>
+      </div>
+
+      <div class="ctl">
+        <div class="row"><label>Point&nbsp;&nbsp;x</label><span class="val" id="xVal">0.90</span></div>
+        <input type="range" id="x" min="-3" max="3" step="0.01" value="0.9">
+      </div>
+
+      <div class="pipe" id="pipe">
+        <div class="node"><div class="lb">x</div><div id="pX">0.90</div></div>
+        <div class="arrow">→</div>
+        <div class="op">g</div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="lb">u = g(x)</div><div id="pU">0.81</div></div>
+        <div class="arrow">→</div>
+        <div class="op f">f</div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="lb">y = h(x)</div><div id="pY">0.72</div></div>
+      </div>
+
+      <div class="chain" id="chain">&mdash;</div>
+
+      <div class="readout"><div class="hint" id="hint"></div></div>
+    </aside>
+
+    <div class="graphwrap">
+      <canvas id="cv" width="1720" height="1040"></canvas>
+      <div class="tip">drag the point &middot; the gold tangent&rsquo;s slope IS f&prime;(g)·g&prime;</div>
+      <div class="legend">
+        <span class="li"><span class="ln" style="border-color:var(--comp)"></span> h(x) = f(g(x))</span>
+        <span class="li"><span class="ln" style="border-color:var(--inner)"></span> inner g(x)</span>
+        <span class="li"><span class="ln" style="border-color:var(--tan)"></span> tangent to h</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var FNS = [
+    { comp:"sin(x²)", inner:function(x){return x*x;}, outer:function(u){return Math.sin(u);}, gName:"x²", fName:"sin u" },
+    { comp:"(sin x)²", inner:function(x){return Math.sin(x);}, outer:function(u){return u*u;}, gName:"sin x", fName:"u²" },
+    { comp:"e^(−x²)", inner:function(x){return -x*x;}, outer:function(u){return Math.exp(u);}, gName:"−x²", fName:"eᵘ" },
+    { comp:"√(x²+1)", inner:function(x){return x*x+1;}, outer:function(u){return Math.sqrt(u);}, gName:"x²+1", fName:"√u" },
+    { comp:"sin(2x)", inner:function(x){return 2*x;}, outer:function(u){return Math.sin(u);}, gName:"2x", fName:"sin u" },
+    { comp:"(½x+1)³", inner:function(x){return 0.5*x+1;}, outer:function(u){return u*u*u;}, gName:"½x+1", fName:"u³" }
+  ];
+  var fi = 0, xt = 0.9;
+  function g(x){ return FNS[fi].inner(x); }
+  function fo(u){ return FNS[fi].outer(u); }
+  function h(x){ return fo(g(x)); }
+  function d(fn, t){ var e=1e-6; return (fn(t+e)-fn(t-e))/(2*e); }
+
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var VIEW = { xmin:-3, xmax:3, ymin:-3, ymax:3 };
+  var W=cv.width, H=cv.height, DPR=1;
+  function fitDPR(){ var r0=1720/1040, cw=cv.clientWidth||860, ch=Math.round(cw/r0), dpr=window.devicePixelRatio||1; DPR=dpr; cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr); W=cv.width; H=cv.height; refresh(); }
+  function sx(x){ return (x-VIEW.xmin)/(VIEW.xmax-VIEW.xmin)*W; }
+  function sy(y){ return H-(y-VIEW.ymin)/(VIEW.ymax-VIEW.ymin)*H; }
+  function wx(px){ return VIEW.xmin+px/W*(VIEW.xmax-VIEW.xmin); }
+  function computeView(){ VIEW.xmin=-3; VIEW.xmax=3; var ymn=0,ymx=0,cap=6;
+    for(var i=0;i<=300;i++){ var x=-3+6*i/300; [h(x),g(x)].forEach(function(y){ if(isFinite(y)){ y=Math.max(-cap,Math.min(cap,y)); if(y<ymn)ymn=y; if(y>ymx)ymx=y; } }); }
+    var sp=(ymx-ymn)||2; VIEW.ymin=ymn-sp*0.16-0.3; VIEW.ymax=ymx+sp*0.16+0.3; }
+
+  function draw(){
+    computeView(); ctx.clearRect(0,0,W,H);
+    ctx.lineWidth=1*DPR; ctx.strokeStyle="rgba(140,160,220,0.09)"; ctx.beginPath();
+    for(var gx=Math.ceil(VIEW.xmin);gx<=VIEW.xmax;gx++){ ctx.moveTo(sx(gx),0); ctx.lineTo(sx(gx),H); }
+    for(var gy=Math.ceil(VIEW.ymin);gy<=VIEW.ymax;gy++){ ctx.moveTo(0,sy(gy)); ctx.lineTo(W,sy(gy)); }
+    ctx.stroke();
+    ctx.strokeStyle="rgba(180,196,240,0.4)"; ctx.lineWidth=1.4*DPR; ctx.beginPath();
+    ctx.moveTo(0,sy(0)); ctx.lineTo(W,sy(0)); if(sx(0)>=0&&sx(0)<=W){ ctx.moveTo(sx(0),0); ctx.lineTo(sx(0),H); } ctx.stroke();
+    ctx.fillStyle="rgba(150,166,204,0.7)"; ctx.font=(13*DPR)+"px 'JetBrains Mono', monospace"; ctx.textAlign="center"; ctx.textBaseline="top";
+    for(var tx=Math.ceil(VIEW.xmin);tx<=VIEW.xmax;tx++){ if(tx!==0) ctx.fillText(tx,sx(tx),sy(0)+6); }
+    plot(function(x){return g(x);}, "rgba(184,155,255,0.55)", 2.2);
+    plot(function(x){return h(x);}, getCss('--comp'), 3.0);
+    var y0=h(xt), m=d(h,xt);
+    ctx.strokeStyle=getCss('--tan'); ctx.lineWidth=2.6*DPR; ctx.beginPath();
+    ctx.moveTo(sx(VIEW.xmin), sy(y0+m*(VIEW.xmin-xt))); ctx.lineTo(sx(VIEW.xmax), sy(y0+m*(VIEW.xmax-xt))); ctx.stroke();
+    dot(xt,y0,"#fff",getCss('--tan'));
+  }
+  function plot(gg,color,lw){ ctx.strokeStyle=color; ctx.lineWidth=lw*DPR; ctx.lineJoin="round"; ctx.beginPath();
+    var N=1000,pen=false,prevY=null;
+    for(var i=0;i<=N;i++){ var x=VIEW.xmin+(VIEW.xmax-VIEW.xmin)*i/N,y=gg(x); if(!isFinite(y)||Math.abs(y)>1e5){pen=false;continue;} var py=sy(y); if(pen&&prevY!==null&&Math.abs(py-prevY)>H*1.3)pen=false; if(!pen){ctx.moveTo(sx(x),py);pen=true;}else ctx.lineTo(sx(x),py); prevY=py; } ctx.stroke(); }
+  function dot(x,y,fill,ring){ if(!isFinite(y))return; if(ring){ctx.beginPath();ctx.arc(sx(x),sy(y),7.5*DPR,0,Math.PI*2);ctx.fillStyle=ring;ctx.fill();} ctx.beginPath();ctx.arc(sx(x),sy(y),(ring?5:6)*DPR,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill(); }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0"; }
+  function fmt(v,dg){ if(!isFinite(v))return "—"; dg=(dg==null?3:dg); if(Math.abs(v)<5e-4)v=0; return (Math.round(v*Math.pow(10,dg))/Math.pow(10,dg)).toFixed(dg); }
+
+  function refresh(){
+    var S=FNS[fi], u=g(xt), y=h(xt), gp=d(S.inner,xt), fp=d(S.outer,u), prod=fp*gp, direct=d(h,xt);
+    document.getElementById('xVal').textContent=fmt(xt,2);
+    document.getElementById('pX').textContent=fmt(xt,2);
+    document.getElementById('pU').textContent=fmt(u,2);
+    document.getElementById('pY').textContent=fmt(y,2);
+    document.getElementById('chain').innerHTML =
+      "h′(x) = <span class='a'>f′(g)</span> · <span class='b'>g′(x)</span><br>" +
+      "= <span class='a'>" + fmt(fp,3) + "</span> · <span class='b'>" + fmt(gp,3) + "</span> = <span class='r'>" + fmt(prod,3) + "</span>";
+    document.getElementById('hint').innerHTML =
+      "Inner rate <b>g′(x) = " + fmt(gp,3) + "</b> feeds the outer stage, which multiplies by <b>f′(u) = " + fmt(fp,3) +
+      "</b>. Their product <b>" + fmt(prod,3) + "</b> matches the tangent slope of h measured directly (<b>" + fmt(direct,3) +
+      "</b>) — that&rsquo;s the chain rule.";
+    draw();
+  }
+
+  var X=document.getElementById('x');
+  X.addEventListener('input',function(){ xt=parseFloat(X.value); refresh(); });
+  document.getElementById('fnseg').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; fi=parseInt(b.getAttribute('data-i'),10);
+    Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.classList.remove('on');}); b.classList.add('on'); refresh(); });
+  var drag=false;
+  cv.addEventListener('pointerdown',function(ev){ drag=true; cv.classList.add('drag'); mv(ev); });
+  window.addEventListener('pointermove',mv); window.addEventListener('pointerup',function(){ drag=false; cv.classList.remove('drag'); });
+  function mv(ev){ if(!drag)return; ev.preventDefault(); var r=cv.getBoundingClientRect(); var px=((ev.touches?ev.touches[0].clientX:ev.clientX)-r.left)/r.width*W; xt=Math.max(-3,Math.min(3,wx(px))); X.value=xt; refresh(); }
+  window.addEventListener('resize',fitDPR); fitDPR();
+})();
+</script>
+</body>
+</html>
