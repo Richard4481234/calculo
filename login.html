@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sign in to Calculo to save your favorite labs and sync them across your devices.">
+<meta name="theme-color" content="#0a0e18">
+<title>Sign in · Calculo</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.6);--line:rgba(140,160,220,0.16);
+    --ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--area:#ff8a5b;--r:16px;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(92,214,176,0.10),transparent 60%),
+      radial-gradient(820px 560px at -8% 8%,rgba(184,155,255,0.08),transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
+  .bar{max-width:1160px;width:100%;margin:0 auto;padding:22px 26px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20px}
+  .bar a.back{font-size:13.5px;color:var(--muted)}.bar a.back:hover{color:var(--ink)}
+  .center{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 22px 60px}
+  .box{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+    padding:32px 30px 28px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent)}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:28px;letter-spacing:-.02em;margin:10px 0 6px}
+  .sub{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 22px}
+  label{display:block;font-size:12.5px;color:var(--muted);margin:14px 0 6px}
+  input{width:100%;background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--ink);border-radius:11px;
+    padding:12px 13px;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:.14s}
+  input:focus{border-color:rgba(92,214,176,.6)}
+  .btn{width:100%;margin-top:20px;background:var(--accent);color:#062018;font-weight:600;font-size:15px;
+    padding:13px;border:0;border-radius:11px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(92,214,176,.5)}
+  .btn:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
+  .toggle{margin-top:18px;font-size:13.5px;color:var(--muted);text-align:center}
+  .toggle a{color:var(--accent);cursor:pointer}
+  .msg{margin-top:16px;font-size:13px;line-height:1.5;border-radius:10px;padding:10px 12px;display:none}
+  .msg.err{display:block;background:rgba(255,138,91,.1);border:1px solid rgba(255,138,91,.4);color:#ffd0bd}
+  .msg.ok{display:block;background:rgba(92,214,176,.1);border:1px solid rgba(92,214,176,.4);color:#bff0e0}
+  .fine{margin-top:20px;font-size:11.5px;color:var(--faint);line-height:1.5;text-align:center}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e1424"/><path d="M5 22 C 10 22, 12 8, 17 8 S 24 18, 27 10" fill="none" stroke="#5cd6b0" stroke-width="2"/><circle cx="17" cy="8" r="2.4" fill="#ffd27a"/></svg>
+      Calculo
+    </a>
+    <a class="back" href="index.html">&larr; Back to labs</a>
+  </div>
+
+  <div class="center">
+    <div class="box">
+      <div class="kicker">Your account</div>
+      <h1 id="title">Sign in</h1>
+      <p class="sub" id="sub">Save your favorite labs and pick up where you left off on any device.</p>
+      <form id="form" autocomplete="on">
+        <label for="email">Email</label>
+        <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+        <label for="pw">Password</label>
+        <input id="pw" type="password" required autocomplete="current-password" minlength="6" placeholder="At least 6 characters">
+        <button class="btn" id="submit" type="submit">Sign in</button>
+      </form>
+      <div class="msg" id="msg"></div>
+      <div class="toggle" id="toggle">New to Calculo? <a id="switch">Create an account</a></div>
+      <p class="fine">One Knovay account works across GeoProof, Physica, and Calculo.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const CFG = {
+      apiKey: "AIzaSyB2YooHATeNcu_3lYzL7vOjTwpDDlP6I1U",
+      authDomain: "geoproof-a2db0.firebaseapp.com",
+      projectId: "geoproof-a2db0",
+      storageBucket: "geoproof-a2db0.firebasestorage.app",
+      messagingSenderId: "504119803431",
+      appId: "1:504119803431:web:87f82a578f16367801d802"
+    };
+    const auth = getAuth(initializeApp(CFG, "calculoAuth"));   // shared name => session carries to the rest of the site
+
+    const params = new URLSearchParams(location.search);
+    const next = params.get("next") || "index.html";
+    let mode = "in";   // "in" | "up"
+
+    const $ = function(id){ return document.getElementById(id); };
+    const title=$("title"), sub=$("sub"), submit=$("submit"), msg=$("msg"), pw=$("pw"), toggle=$("toggle"), sw=$("switch");
+
+    function setMode(m){
+      mode = m;
+      if (m === "up"){
+        title.textContent = "Create your account";
+        sub.textContent = "Set up a free account to save labs and sync them everywhere.";
+        submit.textContent = "Create account";
+        pw.setAttribute("autocomplete","new-password");
+        toggle.innerHTML = 'Already have an account? <a id="switch">Sign in</a>';
+      } else {
+        title.textContent = "Sign in";
+        sub.textContent = "Save your favorite labs and pick up where you left off on any device.";
+        submit.textContent = "Sign in";
+        pw.setAttribute("autocomplete","current-password");
+        toggle.innerHTML = 'New to Calculo? <a id="switch">Create an account</a>';
+      }
+      document.getElementById("switch").addEventListener("click", function(){ setMode(mode==="in"?"up":"in"); msg.className="msg"; });
+      msg.className = "msg";
+    }
+    sw.addEventListener("click", function(){ setMode("up"); });
+
+    function show(kind, text){ msg.className = "msg " + kind; msg.textContent = text; }
+    function friendly(code){
+      switch (code){
+        case "auth/invalid-email": return "That email doesn't look right.";
+        case "auth/missing-password":
+        case "auth/weak-password": return "Please use a password of at least 6 characters.";
+        case "auth/email-already-in-use": return "That email already has an account — try signing in.";
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/user-not-found": return "Email or password is incorrect.";
+        case "auth/too-many-requests": return "Too many attempts. Please wait a moment and try again.";
+        case "auth/unauthorized-domain": return "This site isn't authorized for sign-in yet. (Add calculo.knovay.com in the Firebase console.)";
+        default: return "Something went wrong. Please try again.";
+      }
+    }
+
+    // if already signed in, bounce to the site
+    onAuthStateChanged(auth, function(u){ if (u) location.replace(next); });
+
+    document.getElementById("form").addEventListener("submit", function(e){
+      e.preventDefault();
+      const email = $("email").value.trim(), pass = pw.value;
+      submit.disabled = true; show("ok", mode==="up" ? "Creating your account…" : "Signing you in…");
+      const p = mode==="up"
+        ? createUserWithEmailAndPassword(auth, email, pass)
+        : signInWithEmailAndPassword(auth, email, pass);
+      p.then(function(){ show("ok","Success — taking you back to the labs…"); location.replace(next); })
+       .catch(function(err){ submit.disabled = false; show("err", friendly(err && err.code)); });
+    });
+  </script>
+</body>
+</html>

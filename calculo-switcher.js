@@ -93,6 +93,14 @@
       + "border-radius:8px;padding:5px 9px;font:500 12px 'Inter',system-ui,sans-serif;color:#eef1fb;opacity:0;"
       + "transform:translateX(6px);transition:.15s;pointer-events:none}"
     + "#cxfav.show-tip .cxfav-tip{opacity:1;transform:translateX(0)}"
+    + "#cxsw .cxsw-acct{padding:2px}"
+    + "#cxsw .cxsw-signin{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;color:#eef1fb;font-size:14px;font-weight:500}"
+    + "#cxsw .cxsw-signin:hover{background:rgba(140,160,220,.12)}"
+    + "#cxsw .cxsw-acct-row{display:flex;align-items:center;gap:10px;padding:8px 11px 4px}"
+    + "#cxsw .cxsw-acct-e{font-size:12.5px;color:var(--muted,#9aa6cc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}"
+    + "#cxsw .cxsw-signout{margin-left:auto;background:none;border:1px solid rgba(140,160,220,.24);color:#9aa6cc;"
+      + "border-radius:8px;padding:5px 10px;font:500 12px 'Inter',system-ui,sans-serif;cursor:pointer}"
+    + "#cxsw .cxsw-signout:hover{color:#eef1fb;border-color:rgba(255,138,91,.5)}"
     + "@media(max-width:520px){#cxsw .cxsw-btn span.cxsw-txt{display:none}}"
     + "#cxnav{position:fixed;left:18px;bottom:18px;z-index:2147482000;display:flex;gap:8px;font-family:'Inter',system-ui,sans-serif}"
     + "#cxnav a{display:inline-flex;align-items:center;gap:8px;max-width:230px;background:rgba(18,22,40,.9);color:#eef1fb;"
@@ -179,6 +187,14 @@
       b.setAttribute('aria-label', nowFav ? 'Remove this lab from your saved labs' : 'Save this lab');
       tip.textContent = nowFav ? 'Saved to your labs' : 'Removed';
       b.classList.add('show-tip'); clearTimeout(tid); tid = setTimeout(function(){ b.classList.remove('show-tip'); }, 1400);
+      try { window.dispatchEvent(new CustomEvent('calculo:favschanged')); } catch(e) {}
+    });
+    // reflect changes that arrive from another device (cloud sync)
+    window.addEventListener('calculo:favssynced', function(){
+      var on = favIndex(favStore(), entry.f) >= 0;
+      b.classList.toggle('on', on);
+      star.textContent = on ? '★' : '☆';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 
@@ -213,6 +229,11 @@
   function build(){
     css();
     if (EMBED){ buildA11y(); return; }             // embed: keyboard support only, no chrome
+    // load the account + favorites-sync module once (works quietly; no-op until signed in)
+    if (!document.getElementById('calculo-auth-js')){
+      var am = document.createElement('script'); am.type = 'module'; am.src = 'calculo-auth.js'; am.id = 'calculo-auth-js';
+      document.head.appendChild(am);
+    }
     var wrap = document.createElement('div');
     wrap.id = 'cxsw';
     var rows = LINKS.map(function(l){
@@ -238,8 +259,24 @@
       + '<rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="1.6"/>'
       + '<path d="M5 15 C 9 15, 10 8, 13 8 S 18 14, 19 10" stroke="#5cd6b0" stroke-width="2" stroke-linecap="round" fill="none"/></svg>'
       + '<span class="cxsw-txt">Labs</span><span class="cxsw-chev">▴</span></button>'
-      + '<div class="cxsw-menu" role="menu"><div class="cxsw-lab">Knovay labs</div>' + rows + embedRow + '</div>';
+      + '<div class="cxsw-menu" role="menu"><div class="cxsw-lab">Knovay labs</div>' + rows + embedRow
+      + '<div class="cxsw-div"></div><div class="cxsw-acct" id="cxswAcct"></div></div>';
     document.body.appendChild(wrap);
+
+    // account row — reflects auth state (updated when calculo-auth.js reports in)
+    var acct = wrap.querySelector('#cxswAcct');
+    function renderAcct(user){
+      if (user){
+        acct.innerHTML = '<div class="cxsw-acct-row"><span class="cxsw-ic" style="background:rgba(92,214,176,.16);color:#5cd6b0">✓</span>'
+          + '<span class="cxsw-acct-e" title="' + (user.email || '') + '">' + (user.email || 'Signed in') + '</span>'
+          + '<button type="button" class="cxsw-signout">Sign out</button></div>';
+        acct.querySelector('.cxsw-signout').addEventListener('click', function(e){ e.stopPropagation(); if (window.calculoSignOut) window.calculoSignOut(); });
+      } else {
+        acct.innerHTML = '<a class="cxsw-signin" href="login.html"><span class="cxsw-ic" style="background:rgba(142,162,255,.16);color:#8ea2ff">⇲</span>Sign in to sync</a>';
+      }
+    }
+    renderAcct(window.calculoUser || null);
+    window.addEventListener('calculo:auth', function(e){ renderAcct(e.detail && e.detail.user); });
 
     if (labEntry){
       var embedBtn = wrap.querySelector('.cxsw-embed');
