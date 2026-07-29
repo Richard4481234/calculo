@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Practice calculus with a quick, self-checking quiz — derivatives, integrals, limits, the chain rule and more, with a fresh set every time.">
+<meta name="theme-color" content="#0a0e18">
+<title>Practice Quiz · Calculo</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Calculo">
+<meta property="og:title" content="Practice Quiz · Calculo">
+<meta property="og:description" content="A quick, self-checking calculus quiz — derivatives, integrals, limits, the chain rule and more. Fresh questions every time.">
+<meta property="og:url" content="https://calculo.knovay.com/quiz.html">
+<meta property="og:image" content="https://calculo.knovay.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Practice Quiz · Calculo">
+<meta name="twitter:description" content="A quick, self-checking calculus quiz — fresh questions every time.">
+<meta name="twitter:image" content="https://calculo.knovay.com/og-image.png">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzBhMGUxOCIvPjxwYXRoIGQ9Ik01IDIyIEMgMTAgMjIsIDEyIDgsIDE3IDggUyAyNCAxOCwgMjcgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVjZDZiMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iMTciIGN5PSI4IiByPSIyLjQiIGZpbGw9IiNmZmQyN2EiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.55);--line:rgba(140,160,220,0.16);
+    --ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--tangent:#ffd27a;--deriv:#b89bff;--area:#ff8a5b;--r:16px;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(92,214,176,0.10),transparent 60%),
+      radial-gradient(820px 560px at -8% 8%,rgba(184,155,255,0.08),transparent 55%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .bar{max-width:1160px;margin:0 auto;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20px;letter-spacing:-.01em}
+  .bar-links{display:flex;gap:22px;font-size:13.5px;color:var(--muted)}
+  .bar-links a:hover{color:var(--ink)}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 22px 70px}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);text-align:center}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,46px);letter-spacing:-.02em;line-height:1.05;margin:14px 0 0;text-align:center}
+  .lede{color:var(--muted);font-size:15px;line-height:1.6;max-width:540px;margin:16px auto 0;text-align:center}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px 22px;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-top:30px}
+  .meta{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  .meta .score b{color:var(--accent)}
+  .prog{height:5px;border-radius:99px;background:rgba(140,160,220,.18);overflow:hidden;margin-bottom:22px}
+  .prog>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease}
+  .q{font-family:'Fraunces',Georgia,serif;font-size:clamp(22px,3.4vw,30px);line-height:1.25;letter-spacing:-.01em;margin:0 0 22px;color:var(--ink)}
+  .q sup{font-size:.66em}.q sub{font-size:.66em}
+  .choices{display:grid;gap:11px}
+  .choice{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:rgba(10,14,26,.5);
+    border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:15px 16px;font-size:17px;
+    font-family:'JetBrains Mono',monospace;cursor:pointer;transition:.14s}
+  .choice:hover:not(:disabled){border-color:rgba(92,214,176,.5);transform:translateY(-1px)}
+  .choice:disabled{cursor:default}
+  .choice .k{width:24px;height:24px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:12px;
+    background:rgba(140,160,220,.14);color:var(--muted)}
+  .choice.correct{border-color:var(--accent);background:rgba(92,214,176,.14)}
+  .choice.correct .k{background:var(--accent);color:#062018}
+  .choice.wrong{border-color:var(--area);background:rgba(255,138,91,.12)}
+  .choice.wrong .k{background:var(--area);color:#2a1006}
+  .fb{margin-top:18px;font-size:14px;line-height:1.5;color:var(--muted);min-height:20px}
+  .fb b{color:var(--ink)}
+  .row{margin-top:22px;display:flex;justify-content:flex-end;gap:10px}
+  .btn{background:var(--accent);color:#062018;font-weight:600;font-size:14.5px;padding:11px 20px;border:0;border-radius:11px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(92,214,176,.5)}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .btn.ghost:hover{color:var(--ink);box-shadow:none}
+  .btn[hidden]{display:none}
+
+  .result{text-align:center;padding:14px 6px 6px}
+  .result .big{font-family:'Fraunces',Georgia,serif;font-size:56px;line-height:1;color:var(--accent)}
+  .result .big small{color:var(--faint);font-size:24px}
+  .result .verdict{font-family:'Fraunces',Georgia,serif;font-size:24px;margin-top:14px}
+  .result p{color:var(--muted);font-size:14.5px;margin:12px auto 0;max-width:420px;line-height:1.55}
+  .result .row{justify-content:center;margin-top:26px}
+  footer{max-width:1160px;margin:20px auto 0;padding:26px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e1424"/><path d="M5 22 C 10 22, 12 8, 17 8 S 24 18, 27 10" fill="none" stroke="#5cd6b0" stroke-width="2"/><circle cx="17" cy="8" r="2.4" fill="#ffd27a"/></svg>
+      Calculo
+    </a>
+    <div class="bar-links">
+      <a href="index.html#labs">Labs</a>
+      <a href="index.html">Home</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="kicker">Practice</div>
+    <h1>Test your calculus</h1>
+    <p class="lede">Ten quick questions across derivatives, integrals, limits and more. Pick an answer to check it instantly — then get a fresh set any time.</p>
+
+    <div class="card" id="card"><!-- quiz renders here --></div>
+  </div>
+
+  <footer>Calculo — part of the Knovay learning labs. Every quiz is generated on the spot.</footer>
+
+  <script src="calculo-switcher.js" defer></script>
+  <script>
+  (function(){
+    "use strict";
+    var N = 10;
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    function pick(a){return a[Math.floor(Math.random()*a.length)];}
+    function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function term(c,p){
+      if(c===0)return '0';
+      var cs=(c===1&&p!==0)?'':(c===-1&&p!==0)?'−':(c<0?'−'+Math.abs(c):''+c);
+      if(p===0)return (c<0?'−'+Math.abs(c):''+c);
+      return cs+(p===1?'x':'x<sup>'+p+'</sup>');
+    }
+    function mc(prompt,correct,distractors,fmt){
+      fmt=fmt||function(v){return ''+v;};
+      var seen={},chosen=[];seen[fmt(correct)]=1;
+      for(var i=0;i<distractors.length&&chosen.length<3;i++){var k=fmt(distractors[i]);if(!seen[k]){seen[k]=1;chosen.push(distractors[i]);}}
+      if(chosen.length<3)return null;
+      var opts=shuffle([{v:correct,c:true}].concat(chosen.map(function(d){return {v:d,c:false};})));
+      return {prompt:prompt,choices:opts.map(function(o){return {html:fmt(o.v),correct:o.c};})};
+    }
+    var GEN=[
+      function(){var n=rnd(2,7);return mc('d/dx ( x<sup>'+n+'</sup> ) = ?',term(n,n-1),[term(1,n-1),term(n,n),term(1,n+1)],function(v){return v;});},
+      function(){var n=rnd(2,4),a=rnd(2,5);var correct=n*Math.pow(a,n-1);var cands=[Math.pow(a,n),n*Math.pow(a,n),Math.pow(a,n-1),(n-1)*Math.pow(a,n-2),n*Math.pow(a,n-1)+a];return mc('If f(x)=x<sup>'+n+'</sup>, then f&prime;('+a+') = ?',correct,shuffle(cands));},
+      function(){var combos=[[1,4],[1,6],[1,2],[2,3],[2,6],[3,2],[2,9]];var c=pick(combos),n=c[0],b=c[1];var correct=Math.pow(b,n+1)/(n+1);var cands=[Math.pow(b,n+1),Math.pow(b,n),(n+1)*Math.pow(b,n),Math.pow(b,n+1)/n,correct+b,correct*2].filter(function(v){return Number.isInteger(v);});return mc('&int;<sub>0</sub><sup>'+b+'</sup> x'+(n===1?'':'<sup>'+n+'</sup>')+' dx = ?',correct,shuffle(cands));},
+      function(){var P=[['sin x','cos x'],['cos x','−sin x'],['e<sup>x</sup>','e<sup>x</sup>'],['ln x','1/x'],['tan x','sec<sup>2</sup> x'],['√x','1/(2√x)']];var q=pick(P);var others=P.filter(function(p){return p[1]!==q[1];}).map(function(p){return p[1];});return mc('d/dx ( '+q[0]+' ) = ?',q[1],shuffle(others),function(v){return v;});},
+      function(){var a=rnd(2,5),c2=rnd(1,3),c1=rnd(-3,3),c0=rnd(-4,4);var val=c2*a*a+c1*a+c0;var pp=[term(c2,2)];if(c1!==0)pp.push((c1<0?' − ':' + ')+term(Math.abs(c1),1));if(c0!==0)pp.push((c0<0?' − ':' + ')+Math.abs(c0));var cands=[val+1,val-1,val+a,val-a,c2*a*a-c1*a+c0,2*c2*a+c1];return mc('lim<sub>x&rarr;'+a+'</sub> ( '+pp.join('')+' ) = ?',val,shuffle(cands));},
+      function(){var items=[{q:'d/dx sin(3x) at x=0',a:3,d:[1,0,-3]},{q:'d/dx (2x+1)<sup>3</sup> at x=0',a:6,d:[3,2,1]},{q:'d/dx e<sup>2x</sup> at x=0',a:2,d:[1,0,4]},{q:'d/dx (x<sup>2</sup>+1)<sup>2</sup> at x=1',a:8,d:[4,2,16]},{q:'d/dx cos(2x) at x=0',a:0,d:[2,-2,1]},{q:'d/dx (3x−1)<sup>2</sup> at x=1',a:12,d:[6,4,9]}];var it=pick(items);return mc(it.q+' = ?',it.a,shuffle(it.d.slice()));},
+      function(){var P=[['t<sup>2</sup>+1','x<sup>2</sup>+1',['2x','x<sup>3</sup>/3 + x','x<sup>2</sup>']],['sin t','sin x',['cos x','−cos x','−sin x']],['e<sup>t</sup>','e<sup>x</sup>',['e<sup>x</sup>+1','x e<sup>x</sup>','e<sup>x</sup>/x']],['3t<sup>2</sup>','3x<sup>2</sup>',['6x','x<sup>3</sup>','9x<sup>2</sup>']]];var q=pick(P);return mc('If F(x)=&int;<sub>0</sub><sup>x</sup> '+q[0]+' dt, then F&prime;(x) = ?',q[1],shuffle(q[2].slice()),function(v){return v;});},
+      function(){var b=pick([-8,-6,-4,-2,2,4,6]);var c=rnd(-3,5);var correct=-b/2;var cands=[b/2,-b,b,correct+1,correct-1];var bt=(b<0?' − '+Math.abs(b)+'x':' + '+b+'x');var ct=(c<0?' − '+Math.abs(c):' + '+c);return mc('The critical point of f(x)=x<sup>2</sup>'+bt+ct+' is at x = ?',correct,shuffle(cands));}
+    ];
+    function makeQ(){for(var t=0;t<12;t++){var q=pick(GEN)();if(q)return q;}return null;}
+    function makeQuiz(n){var out=[],seen={},g=0;while(out.length<n&&g++<400){var q=makeQ();if(!q||seen[q.prompt])continue;seen[q.prompt]=1;out.push(q);}return out;}
+
+    var card=document.getElementById('card');
+    var quiz, idx, score, answered;
+    var LETTERS=['A','B','C','D'];
+
+    function start(){ quiz=makeQuiz(N); idx=0; score=0; answered=false; renderQ(); }
+
+    function renderQ(){
+      var q=quiz[idx];
+      answered=false;
+      var pct=Math.round((idx)/N*100);
+      var h='';
+      h+='<div class="meta"><span>Question '+(idx+1)+' / '+N+'</span><span class="score">Score <b>'+score+'</b></span></div>';
+      h+='<div class="prog"><i style="width:'+pct+'%"></i></div>';
+      h+='<p class="q">'+q.prompt+'</p>';
+      h+='<div class="choices">';
+      q.choices.forEach(function(c,i){
+        h+='<button class="choice" data-i="'+i+'"><span class="k">'+LETTERS[i]+'</span><span>'+c.html+'</span></button>';
+      });
+      h+='</div><div class="fb" id="fb"></div>';
+      h+='<div class="row"><button class="btn" id="next" hidden>'+(idx===N-1?'See results':'Next question')+' &rarr;</button></div>';
+      card.innerHTML=h;
+      Array.prototype.forEach.call(card.querySelectorAll('.choice'), function(btn){
+        btn.addEventListener('click', function(){ choose(parseInt(btn.getAttribute('data-i'),10)); });
+      });
+      var nx=document.getElementById('next');
+      nx.addEventListener('click', function(){ idx++; if(idx>=N) renderResult(); else renderQ(); });
+    }
+
+    function choose(i){
+      if(answered) return; answered=true;
+      var q=quiz[idx];
+      var btns=card.querySelectorAll('.choice');
+      var correctIdx=-1;
+      q.choices.forEach(function(c,k){ if(c.correct) correctIdx=k; });
+      Array.prototype.forEach.call(btns,function(b,k){
+        b.disabled=true;
+        if(k===correctIdx) b.classList.add('correct');
+        else if(k===i) b.classList.add('wrong');
+      });
+      var fb=document.getElementById('fb');
+      if(i===correctIdx){ score++; fb.innerHTML='<b>Correct.</b>'; }
+      else { fb.innerHTML='<b>Not quite.</b> The answer is <b>'+q.choices[correctIdx].html+'</b>.'; }
+      card.querySelector('.score b').textContent=score;
+      document.getElementById('next').hidden=false;
+      document.getElementById('next').focus();
+    }
+
+    function renderResult(){
+      var pct=Math.round(score/N*100);
+      var verdict, note;
+      if(score===N){verdict='Flawless.';note='Every one correct — you have these cold.';}
+      else if(score>=8){verdict='Excellent.';note='A strong run. A couple of tricky ones aside, this is solid.';}
+      else if(score>=6){verdict='Good work.';note='You are getting there — revisit the ones that slipped and go again.';}
+      else if(score>=4){verdict='Keep going.';note='A fair start. Try the matching labs, then take a fresh set.';}
+      else {verdict='Early days.';note='No worries — open a lab to see the idea move, then come back.';}
+      card.innerHTML=
+        '<div class="result"><div class="big">'+score+'<small>/'+N+'</small></div>'
+        +'<div class="verdict">'+verdict+'</div>'
+        +'<p>You scored '+pct+'%. '+note+'</p>'
+        +'<div class="row"><a class="btn ghost" href="index.html#labs">Back to labs</a>'
+        +'<button class="btn" id="again">New quiz &rarr;</button></div></div>';
+      document.getElementById('again').addEventListener('click', start);
+    }
+
+    start();
+  })();
+  </script>
+</body>
+</html>
