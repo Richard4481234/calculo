@@ -6,6 +6,19 @@
   "use strict";
   if (document.getElementById('cxsw')) return;
 
+  /* Embed mode: ?embed hides all site chrome so a single lab drops cleanly
+     into an iframe. Detect + hide as early as possible to avoid a flash. */
+  var EMBED = /[?&]embed(?:=[^&]*)?(?:&|$)/.test(location.search);
+  if (EMBED){
+    document.documentElement.classList.add('cx-embed');
+    var es = document.createElement('style');
+    es.textContent =
+      "html.cx-embed .head{display:none!important}"
+    + "html.cx-embed .stage{margin-top:0!important;padding-top:14px!important}"
+    + "html.cx-embed #cxsw,html.cx-embed #cxnav{display:none!important}";
+    (document.head || document.documentElement).appendChild(es);
+  }
+
   var LINKS = [
     { href:"https://knovay.com/",          name:"Knovay home", ic:"⌂", col:"#8ea2ff", tint:"rgba(142,162,255,.16)" },
     { href:"https://geoproof.knovay.com/", name:"GeoProof",    ic:"△", col:"#7fb2ec", tint:"rgba(127,178,236,.16)" },
@@ -66,6 +79,10 @@
     + "#cxsw .cxsw-ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:none;line-height:1}"
     + "#cxsw .cxsw-cur{font-weight:700}"
     + "#cxsw .cxsw-tick{margin-left:auto;color:#5cd6b0;font-size:13px}"
+    + "#cxsw .cxsw-div{height:1px;background:rgba(140,160,220,.14);margin:5px 6px}"
+    + "#cxsw .cxsw-embed{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border-radius:9px;"
+      + "background:none;border:0;cursor:pointer;color:#eef1fb;font:500 14px 'Inter',system-ui,sans-serif;text-align:left}"
+    + "#cxsw .cxsw-embed:hover{background:rgba(140,160,220,.12)}"
     + "@media(max-width:520px){#cxsw .cxsw-btn span.cxsw-txt{display:none}}"
     + "#cxnav{position:fixed;left:18px;bottom:18px;z-index:2147482000;display:flex;gap:8px;font-family:'Inter',system-ui,sans-serif}"
     + "#cxnav a{display:inline-flex;align-items:center;gap:8px;max-width:230px;background:rgba(18,22,40,.9);color:#eef1fb;"
@@ -155,6 +172,7 @@
 
   function build(){
     css();
+    if (EMBED){ buildA11y(); return; }             // embed: keyboard support only, no chrome
     var wrap = document.createElement('div');
     wrap.id = 'cxsw';
     var rows = LINKS.map(function(l){
@@ -163,14 +181,49 @@
         + '<span class="cxsw-ic" style="background:' + l.tint + ';color:' + l.col + '">' + l.ic + '</span>'
         + l.name + (cur ? '<span class="cxsw-tick">✓</span>' : '') + '</a>';
     }).join('');
+
+    // "Copy embed code" — only on lab pages (pages present in SEQ)
+    var file = (location.pathname.replace(/\/+$/,'').split('/').pop()) || 'index.html';
+    var labEntry = null;
+    for (var q = 0; q < SEQ.length; q++){ if (SEQ[q].f === file){ labEntry = SEQ[q]; break; } }
+    var embedRow = labEntry
+      ? '<div class="cxsw-div"></div><button type="button" class="cxsw-embed" role="menuitem">'
+        + '<span class="cxsw-ic" style="background:rgba(92,214,176,.16);color:#5cd6b0">⧉</span>'
+        + '<span class="cxsw-embed-t">Copy embed code</span></button>'
+      : '';
+
     wrap.innerHTML =
       '<button type="button" class="cxsw-btn" aria-haspopup="true" aria-expanded="false" aria-label="Switch labs">'
       + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
       + '<rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="1.6"/>'
       + '<path d="M5 15 C 9 15, 10 8, 13 8 S 18 14, 19 10" stroke="#5cd6b0" stroke-width="2" stroke-linecap="round" fill="none"/></svg>'
       + '<span class="cxsw-txt">Labs</span><span class="cxsw-chev">▴</span></button>'
-      + '<div class="cxsw-menu" role="menu"><div class="cxsw-lab">Knovay labs</div>' + rows + '</div>';
+      + '<div class="cxsw-menu" role="menu"><div class="cxsw-lab">Knovay labs</div>' + rows + embedRow + '</div>';
     document.body.appendChild(wrap);
+
+    if (labEntry){
+      var embedBtn = wrap.querySelector('.cxsw-embed');
+      var embedLabel = embedBtn.querySelector('.cxsw-embed-t');
+      embedBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var url = 'https://calculo.knovay.com/' + file + '?embed';
+        var code = '<iframe src="' + url + '" width="820" height="640" loading="lazy" '
+          + 'style="border:1px solid #d8dde8;border-radius:12px;max-width:100%" '
+          + 'title="' + labEntry.t + ' — Calculo"></iframe>';
+        var done = function(ok){
+          embedLabel.textContent = ok ? 'Copied to clipboard!' : 'Press Ctrl+C to copy';
+          setTimeout(function(){ embedLabel.textContent = 'Copy embed code'; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(code).then(function(){ done(true); }, function(){ done(false); });
+        } else {
+          var ta = document.createElement('textarea'); ta.value = code;
+          ta.style.cssText = 'position:fixed;left:-9999px'; document.body.appendChild(ta);
+          ta.select(); try{ document.execCommand('copy'); done(true); }catch(err){ done(false); }
+          document.body.removeChild(ta);
+        }
+      });
+    }
 
     var btn = wrap.querySelector('.cxsw-btn');
     btn.addEventListener('click', function(e){
