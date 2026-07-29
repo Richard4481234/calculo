@@ -14,6 +14,33 @@
   ];
   var CURRENT = "Calculo";
 
+  /* Pedagogical order of the 23 labs, used for prev/next navigation. */
+  var SEQ = [
+    { f:"limits_continuity.html",        t:"Limits & Continuity" },
+    { f:"epsilon_delta.html",            t:"Epsilon–Delta" },
+    { f:"derivative_tangent.html",       t:"Derivative & Tangent" },
+    { f:"chain_rule.html",               t:"Chain Rule" },
+    { f:"implicit_differentiation.html", t:"Implicit Differentiation" },
+    { f:"mean_value_theorem.html",       t:"Mean Value Theorem" },
+    { f:"optimization.html",             t:"Optimization" },
+    { f:"related_rates.html",            t:"Related Rates" },
+    { f:"newtons_method.html",           t:"Newton’s Method" },
+    { f:"lhopital.html",                 t:"L’Hôpital’s Rule" },
+    { f:"taylor_series.html",            t:"Taylor Series" },
+    { f:"area_riemann.html",             t:"Riemann Sums" },
+    { f:"accumulation_ftc.html",         t:"Accumulation & FTC" },
+    { f:"area_between.html",             t:"Area Between Curves" },
+    { f:"average_value.html",            t:"Average Value" },
+    { f:"volume_revolution.html",        t:"Volumes of Revolution" },
+    { f:"shell_method.html",             t:"Shell Method" },
+    { f:"arc_length.html",               t:"Arc Length" },
+    { f:"parametric_polar.html",         t:"Parametric Curves" },
+    { f:"polar_area.html",               t:"Polar Area" },
+    { f:"slope_fields.html",             t:"Slope Fields" },
+    { f:"infinite_series.html",          t:"Infinite Series" },
+    { f:"improper_integrals.html",       t:"Improper Integrals" }
+  ];
+
   function css(){
     var s = document.createElement('style');
     s.id = 'cxsw-style';
@@ -39,8 +66,47 @@
     + "#cxsw .cxsw-ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:none;line-height:1}"
     + "#cxsw .cxsw-cur{font-weight:700}"
     + "#cxsw .cxsw-tick{margin-left:auto;color:#5cd6b0;font-size:13px}"
-    + "@media(max-width:520px){#cxsw .cxsw-btn span.cxsw-txt{display:none}}";
+    + "@media(max-width:520px){#cxsw .cxsw-btn span.cxsw-txt{display:none}}"
+    + "#cxnav{position:fixed;left:18px;bottom:18px;z-index:2147482000;display:flex;gap:8px;font-family:'Inter',system-ui,sans-serif}"
+    + "#cxnav a{display:inline-flex;align-items:center;gap:8px;max-width:230px;background:rgba(18,22,40,.9);color:#eef1fb;"
+      + "border:1px solid rgba(140,160,220,.28);border-radius:999px;padding:9px 13px;text-decoration:none;"
+      + "backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 26px -10px rgba(0,0,0,.6)}"
+    + "#cxnav a:hover{border-color:rgba(92,214,176,.6)}"
+    + "#cxnav .cxnav-ar{color:#5cd6b0;font-size:15px;flex:none;line-height:1}"
+    + "#cxnav .cxnav-tx{display:flex;flex-direction:column;line-height:1.15;min-width:0}"
+    + "#cxnav .cxnav-k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#69739b}"
+    + "#cxnav .cxnav-t{font:600 12.5px 'Inter',system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
+    + "#cxnav a.nx{text-align:right}"
+    + "@media(max-width:640px){#cxnav .cxnav-tx{display:none}#cxnav a{padding:10px 12px}}";
     document.head.appendChild(s);
+  }
+
+  function buildNav(){
+    var path = location.pathname.replace(/\/+$/,'');
+    var file = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
+    var i = -1;
+    for (var k = 0; k < SEQ.length; k++){ if (SEQ[k].f === file){ i = k; break; } }
+    if (i === -1) return;                          // hub or unknown page: no prev/next
+    var prev = SEQ[(i - 1 + SEQ.length) % SEQ.length];
+    var next = SEQ[(i + 1) % SEQ.length];
+    var nav = document.createElement('nav');
+    nav.id = 'cxnav';
+    nav.setAttribute('aria-label', 'Lab navigation');
+    nav.innerHTML =
+      '<a class="pv" href="' + prev.f + '" rel="prev" aria-label="Previous lab: ' + prev.t + '">'
+        + '<span class="cxnav-ar">‹</span>'
+        + '<span class="cxnav-tx"><span class="cxnav-k">Prev</span><span class="cxnav-t">' + prev.t + '</span></span></a>'
+      + '<a class="nx" href="' + next.f + '" rel="next" aria-label="Next lab: ' + next.t + '">'
+        + '<span class="cxnav-tx"><span class="cxnav-k">Next</span><span class="cxnav-t">' + next.t + '</span></span>'
+        + '<span class="cxnav-ar">›</span></a>';
+    document.body.appendChild(nav);
+
+    document.addEventListener('keydown', function(e){
+      if (e.altKey && !e.ctrlKey && !e.metaKey){
+        if (e.key === 'ArrowLeft'){ e.preventDefault(); location.href = prev.f; }
+        else if (e.key === 'ArrowRight'){ e.preventDefault(); location.href = next.f; }
+      }
+    });
   }
 
   function build(){
