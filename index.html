@@ -522,12 +522,13 @@
 
   <footer>
     <span>Calculo — part of the Knovay learning labs.</span>
-    <span>&#9670;&nbsp; <b id="calcVisits">&hellip;</b> visits and counting</span>
+    <span>&#9670;&nbsp; <b id="calcVisits">&hellip;</b> Calculo visits &nbsp;&middot;&nbsp; <b id="totalVisits">&hellip;</b> across all Knovay labs</span>
     <span>Differential calculus, made interactive.</span>
   </footer>
 
   <script src="calculo-switcher.js" defer></script>
   <script type="module" src="calculo-visits.js"></script>
+  <script type="module" src="calculo-total.js"></script>
   <script>
   (function(){
     function store(){ try{ return JSON.parse(localStorage.getItem('calculo:favs')||'[]'); }catch(e){ return []; } }
