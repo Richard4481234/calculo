@@ -23,8 +23,8 @@ try {
 } catch (e) { /* firebase unavailable — page still works, just no counter */ }
 
 function paint(n){
-  var el = document.getElementById("calcVisits");
-  if (el) el.textContent = Number(n).toLocaleString();
+  var t = Number(n).toLocaleString();
+  ["calcVisits", "heroCalc"].forEach(function(id){ var el = document.getElementById(id); if (el) el.textContent = t; });
 }
 
 // Instant paint from the last known value so the number never flashes "…".

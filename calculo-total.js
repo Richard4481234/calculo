@@ -24,11 +24,9 @@ try {
 
 var latest = { geo:null, phys:null, calc:null };
 function paintTotal(){
-  var el = document.getElementById("totalVisits");
-  if (!el) return;
   if (latest.geo === null && latest.phys === null && latest.calc === null) return;
-  var t = (latest.geo || 0) + (latest.phys || 0) + (latest.calc || 0);
-  el.textContent = Number(t).toLocaleString();
+  var t = Number((latest.geo || 0) + (latest.phys || 0) + (latest.calc || 0)).toLocaleString();
+  ["totalVisits", "heroTotal"].forEach(function(id){ var el = document.getElementById(id); if (el) el.textContent = t; });
 }
 function live(db, field, key){
   try {
