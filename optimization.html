@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Find the peaks and valleys of a curve. Where the tangent goes flat, f'(x)=0 — and the second derivative tells you whether it's a maximum or a minimum. Interactive optimization.">
-<meta name="theme-color" content="#0a0e18">
+<meta name="theme-color" content="#ffffff">
 <title>Maxima &amp; Minima &middot; Calculo</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Calculo">
@@ -25,20 +25,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
-    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
-    --accent:#5cd6b0;      /* f(x) */
-    --tangent:#ffd27a;     /* tangent at the point */
-    --max:#ff8a5b;         /* local maximum */
-    --min:#5cd6b0;         /* local minimum */
-    --infl:#b89bff;        /* inflection */
+    --bg-0:#ffffff; --bg-1:#f2f5f8; --panel:rgba(255,255,255,0.6); --line:rgba(40,58,84,0.16);
+    --ink:#1b2430; --muted:#59626f; --faint:#8a92a0;
+    --accent:#0e9c74;      /* f(x) */
+    --tangent:#bf7c0f;     /* tangent at the point */
+    --max:#d65426;         /* local maximum */
+    --min:#0e9c74;         /* local minimum */
+    --infl:#6c46d6;        /* inflection */
     --r:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
   body{background:
-      radial-gradient(1100px 640px at 82% -10%, rgba(255,138,91,0.08), transparent 60%),
-      radial-gradient(820px 560px at -8% 8%, rgba(92,214,176,0.08), transparent 55%),
+      radial-gradient(1100px 640px at 82% -10%, rgba(214,84,38,0.08), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(14,156,116,0.08), transparent 55%),
       linear-gradient(160deg,var(--bg-0),var(--bg-1));
     background-attachment:fixed; min-height:100vh; color:var(--ink);
     font-family:'Inter',system-ui,sans-serif;}
@@ -61,25 +61,25 @@
   .plabel.mt{margin-top:24px}
 
   .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+  .seg button{background:rgba(255,255,255,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
     padding:9px 8px;font:500 12.5px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;gap:6px}
-  .seg button:hover{border-color:rgba(255,210,122,.5);color:var(--ink)}
-  .seg button.on{background:rgba(255,210,122,.13);border-color:var(--tangent);color:var(--ink)}
+  .seg button:hover{border-color:rgba(191,124,15,.5);color:var(--ink)}
+  .seg button.on{background:rgba(191,124,15,.13);border-color:var(--tangent);color:var(--ink)}
   .seg button .fx{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px}
 
   .ctl{margin-top:16px}
   .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
   .ctl .row label{font-size:13px;color:var(--muted)}
   .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
-  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--tangent);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--tangent)}
-  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--tangent);cursor:pointer;border:2px solid #0a0e18}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(40,58,84,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--tangent);cursor:pointer;border:2px solid #ffffff;box-shadow:0 0 0 1px var(--tangent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--tangent);cursor:pointer;border:2px solid #ffffff}
 
   .check{display:flex;align-items:center;gap:10px;margin-top:15px;cursor:pointer;user-select:none}
   .check input{position:absolute;opacity:0;pointer-events:none}
-  .box{width:38px;height:22px;border-radius:99px;background:rgba(140,160,220,.2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
-  .box::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cdd6f0;transition:.15s}
-  .check input:checked + .box{background:rgba(184,155,255,.5);border-color:var(--infl)}
+  .box{width:38px;height:22px;border-radius:99px;background:rgba(40,58,84,.2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
+  .box::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#6b7480;transition:.15s}
+  .check input:checked + .box{background:rgba(108,70,214,.5);border-color:var(--infl)}
   .check input:checked + .box::after{left:18px;background:#fff}
   .check .lab{font-size:13.5px;color:var(--muted)}
   .check input:checked ~ .lab{color:var(--ink)}
@@ -94,10 +94,10 @@
   .readout .r .hint b{color:var(--ink);font-weight:600}
   .badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
     padding:3px 9px;border-radius:99px;margin-left:2px}
-  .badge.max{background:rgba(255,138,91,.16);color:var(--max);border:1px solid rgba(255,138,91,.4)}
-  .badge.min{background:rgba(92,214,176,.16);color:var(--min);border:1px solid rgba(92,214,176,.4)}
-  .badge.infl{background:rgba(184,155,255,.16);color:var(--infl);border:1px solid rgba(184,155,255,.4)}
-  .badge.none{background:rgba(140,160,220,.12);color:var(--muted);border:1px solid var(--line)}
+  .badge.max{background:rgba(214,84,38,.16);color:var(--max);border:1px solid rgba(214,84,38,.4)}
+  .badge.min{background:rgba(14,156,116,.16);color:var(--min);border:1px solid rgba(14,156,116,.4)}
+  .badge.infl{background:rgba(108,70,214,.16);color:var(--infl);border:1px solid rgba(108,70,214,.4)}
+  .badge.none{background:rgba(40,58,84,.12);color:var(--muted);border:1px solid var(--line)}
 
   .graphwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:relative;
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -241,17 +241,17 @@
     ctx.clearRect(0,0,W,H);
 
     // grid
-    ctx.lineWidth = 1*DPR; ctx.strokeStyle = "rgba(140,160,220,0.09)"; ctx.beginPath();
+    ctx.lineWidth = 1*DPR; ctx.strokeStyle = "rgba(40,58,84,0.09)"; ctx.beginPath();
     for(var gx=Math.ceil(VIEW.xmin); gx<=VIEW.xmax; gx++){ ctx.moveTo(sx(gx),0); ctx.lineTo(sx(gx),H); }
     for(var gy=Math.ceil(VIEW.ymin); gy<=VIEW.ymax; gy++){ ctx.moveTo(0,sy(gy)); ctx.lineTo(W,sy(gy)); }
     ctx.stroke();
 
     // axes
-    ctx.strokeStyle = "rgba(180,196,240,0.4)"; ctx.lineWidth = 1.4*DPR; ctx.beginPath();
+    ctx.strokeStyle = "rgba(40,58,84,0.4)"; ctx.lineWidth = 1.4*DPR; ctx.beginPath();
     ctx.moveTo(0, sy(0)); ctx.lineTo(W, sy(0));
     if(sx(0)>=0 && sx(0)<=W){ ctx.moveTo(sx(0),0); ctx.lineTo(sx(0),H); }
     ctx.stroke();
-    ctx.fillStyle = "rgba(150,166,204,0.75)"; ctx.font = (13*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "rgba(92,104,122,0.75)"; ctx.font = (13*DPR)+"px 'JetBrains Mono', monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "top";
     for(var tx=Math.ceil(VIEW.xmin); tx<=VIEW.xmax; tx++){ if(tx!==0) ctx.fillText(tx, sx(tx), sy(0)+6); }
     ctx.textAlign = "left"; ctx.textBaseline = "middle";
@@ -297,15 +297,15 @@
     if(!isFinite(y)) return;
     if(ring){ ctx.beginPath(); ctx.arc(sx(x), sy(y), 7.5*DPR, 0, Math.PI*2); ctx.fillStyle = ring; ctx.fill(); }
     ctx.beginPath(); ctx.arc(sx(x), sy(y), (ring?5:6.5)*DPR, 0, Math.PI*2); ctx.fillStyle = fill; ctx.fill();
-    if(!ring){ ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(10,14,26,0.7)"; ctx.stroke(); }
+    if(!ring){ ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.stroke(); }
   }
   function openDot(x, y, stroke){
     if(!isFinite(y)) return;
     ctx.beginPath(); ctx.arc(sx(x), sy(y), 6*DPR, 0, Math.PI*2);
-    ctx.fillStyle = getCss('--bg-1') || "#101529"; ctx.fill();
+    ctx.fillStyle = getCss('--bg-1') || "#f2f5f8"; ctx.fill();
     ctx.lineWidth = 2.4*DPR; ctx.strokeStyle = stroke; ctx.stroke();
   }
-  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#0e9c74"; }
 
   // ---- readouts ----
   function fmt(v){ if(!isFinite(v)) return "—"; if(Math.abs(v)<5e-4) v=0; return (Math.round(v*1000)/1000).toFixed(3); }

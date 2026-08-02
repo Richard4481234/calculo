@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="In polar coordinates area is swept, not stacked. Fan out thin triangular wedges from the origin and the region's area becomes ½∫r(θ)² dθ.">
-<meta name="theme-color" content="#0a0e18">
+<meta name="theme-color" content="#ffffff">
 <title>Polar Area &middot; Calculo</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Calculo">
@@ -23,9 +23,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.6);--line:rgba(140,160,220,0.16);--ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--wedge:#ff8a5b;--exact:#ffd27a;--r:16px;}
+  :root{--bg-0:#ffffff;--bg-1:#f2f5f8;--panel:rgba(255,255,255,0.6);--line:rgba(40,58,84,0.16);--ink:#1b2430;--muted:#59626f;--faint:#8a92a0;--accent:#0e9c74;--wedge:#d65426;--exact:#bf7c0f;--r:16px;}
   *{box-sizing:border-box}html,body{margin:0}
-  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(255,138,91,0.09),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(92,214,176,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(214,84,38,0.09),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(14,156,116,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
   a{color:inherit;text-decoration:none}
   .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .back{font-size:13px;color:var(--muted)}.back:hover{color:var(--ink)}
@@ -38,13 +38,13 @@
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
   .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
   .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
-  .seg button:hover{border-color:rgba(255,138,91,.5);color:var(--ink)}.seg button.on{background:rgba(255,138,91,.14);border-color:var(--wedge);color:var(--ink)}
+  .seg button{background:rgba(255,255,255,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
+  .seg button:hover{border-color:rgba(214,84,38,.5);color:var(--ink)}.seg button.on{background:rgba(214,84,38,.14);border-color:var(--wedge);color:var(--ink)}
   .ctl{margin-top:16px}.ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
   .ctl .row label{font-size:13px;color:var(--muted)}.ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
-  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--wedge);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--wedge)}
-  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--wedge);cursor:pointer;border:2px solid #0a0e18}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(40,58,84,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--wedge);cursor:pointer;border:2px solid #ffffff;box-shadow:0 0 0 1px var(--wedge)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--wedge);cursor:pointer;border:2px solid #ffffff}
   .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
   .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
   .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
@@ -88,7 +88,7 @@
     <div class="graphwrap">
       <canvas id="cv" width="1500" height="1160"></canvas>
       <div class="tip">each orange wedge is ½·r²·Δθ</div>
-      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> r(θ)</span><span class="li"><span class="sw" style="background:rgba(255,138,91,0.2)"></span> wedges</span></div>
+      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> r(θ)</span><span class="li"><span class="sw" style="background:rgba(214,84,38,0.2)"></span> wedges</span></div>
     </div>
   </div>
 <script>
@@ -111,26 +111,26 @@
   function pt(t){var rr=r(t);return [PX(rr*Math.cos(t)),PY(rr*Math.sin(t))];}
   function draw(){
     computeScale();ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle="rgba(180,196,240,0.2)";ctx.lineWidth=1.2*DPR;ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.stroke();
-    ctx.strokeStyle="rgba(140,160,220,0.08)";ctx.lineWidth=1*DPR;for(var u=1;u*SCALE<Math.max(W,H)/2;u++){ctx.beginPath();ctx.arc(CX,CY,u*SCALE,0,Math.PI*2);ctx.stroke();}
+    ctx.strokeStyle="rgba(40,58,84,0.2)";ctx.lineWidth=1.2*DPR;ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.stroke();
+    ctx.strokeStyle="rgba(40,58,84,0.08)";ctx.lineWidth=1*DPR;for(var u=1;u*SCALE<Math.max(W,H)/2;u++){ctx.beginPath();ctx.arc(CX,CY,u*SCALE,0,Math.PI*2);ctx.stroke();}
     // wedges over [a,b]
     var lo=Math.min(a,b),hi=Math.max(a,b),dt=(hi-lo)/n;
     for(var k=0;k<n;k++){var tm=lo+(k+0.5)*dt,rr=r(tm);
       ctx.beginPath();ctx.moveTo(CX,CY);
       ctx.lineTo(CX+rr*Math.cos(lo+k*dt)*SCALE, CY-rr*Math.sin(lo+k*dt)*SCALE);
       ctx.lineTo(CX+rr*Math.cos(lo+(k+1)*dt)*SCALE, CY-rr*Math.sin(lo+(k+1)*dt)*SCALE);
-      ctx.closePath();ctx.fillStyle="rgba(255,138,91,0.20)";ctx.fill();
-      ctx.strokeStyle="rgba(255,138,91,0.5)";ctx.lineWidth=1*DPR;ctx.stroke();
+      ctx.closePath();ctx.fillStyle="rgba(214,84,38,0.20)";ctx.fill();
+      ctx.strokeStyle="rgba(214,84,38,0.5)";ctx.lineWidth=1*DPR;ctx.stroke();
     }
     // full curve
-    ctx.strokeStyle="rgba(140,160,220,0.28)";ctx.lineWidth=1.6*DPR;ctx.beginPath();
+    ctx.strokeStyle="rgba(40,58,84,0.28)";ctx.lineWidth=1.6*DPR;ctx.beginPath();
     for(var i=0;i<=1400;i++){var t=FNS[fi].span*i/1400,P=pt(t);if(i===0)ctx.moveTo(P[0],P[1]);else ctx.lineTo(P[0],P[1]);}ctx.stroke();
     // swept arc bright
     ctx.strokeStyle=getCss('--accent');ctx.lineWidth=3*DPR;ctx.lineJoin="round";ctx.beginPath();
     var M=Math.max(2,Math.round(600*(hi-lo)/FNS[fi].span));
     for(var j=0;j<=M;j++){var t2=lo+(hi-lo)*j/M,P2=pt(t2);if(j===0)ctx.moveTo(P2[0],P2[1]);else ctx.lineTo(P2[0],P2[1]);}ctx.stroke();
   }
-  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0";}
+  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#0e9c74";}
   function fmt(v,d){if(!isFinite(v))return "—";d=(d==null?4:d);return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
   function wedgeSum(){var lo=Math.min(a,b),hi=Math.max(a,b),dt=(hi-lo)/n,s=0;for(var k=0;k<n;k++){var tm=lo+(k+0.5)*dt;s+=r(tm)*r(tm);}return {v:0.5*s*dt,dt:dt};}
   function exact(){var lo=Math.min(a,b),hi=Math.max(a,b),N=8000,h=(hi-lo)/N,s=0;for(var i=0;i<N;i++){var t=lo+(i+0.5)*h;s+=r(t)*r(t);}return 0.5*s*h;}

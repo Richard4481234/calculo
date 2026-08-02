@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Practice calculus with a quick, self-checking quiz — derivatives, integrals, limits, the chain rule and more, with a fresh set every time.">
-<meta name="theme-color" content="#0a0e18">
+<meta name="theme-color" content="#ffffff">
 <title>Practice Quiz · Calculo</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Calculo">
@@ -23,11 +23,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.55);--line:rgba(140,160,220,0.16);
-    --ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--tangent:#ffd27a;--deriv:#b89bff;--area:#ff8a5b;--r:16px;}
+  :root{--bg-0:#ffffff;--bg-1:#f2f5f8;--panel:rgba(255,255,255,0.55);--line:rgba(40,58,84,0.16);
+    --ink:#1b2430;--muted:#59626f;--faint:#8a92a0;--accent:#0e9c74;--tangent:#bf7c0f;--deriv:#6c46d6;--area:#d65426;--r:16px;}
   *{box-sizing:border-box}html,body{margin:0}
-  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(92,214,176,0.10),transparent 60%),
-      radial-gradient(820px 560px at -8% 8%,rgba(184,155,255,0.08),transparent 55%),
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(14,156,116,0.10),transparent 60%),
+      radial-gradient(820px 560px at -8% 8%,rgba(108,70,214,0.08),transparent 55%),
       linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);
     font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
@@ -45,27 +45,27 @@
   .meta{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;
     letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
   .meta .score b{color:var(--accent)}
-  .prog{height:5px;border-radius:99px;background:rgba(140,160,220,.18);overflow:hidden;margin-bottom:22px}
+  .prog{height:5px;border-radius:99px;background:rgba(40,58,84,.18);overflow:hidden;margin-bottom:22px}
   .prog>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease}
   .q{font-family:'Fraunces',Georgia,serif;font-size:clamp(22px,3.4vw,30px);line-height:1.25;letter-spacing:-.01em;margin:0 0 22px;color:var(--ink)}
   .q sup{font-size:.66em}.q sub{font-size:.66em}
   .choices{display:grid;gap:11px}
-  .choice{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:rgba(10,14,26,.5);
+  .choice{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:rgba(255,255,255,.5);
     border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:15px 16px;font-size:17px;
     font-family:'JetBrains Mono',monospace;cursor:pointer;transition:.14s}
-  .choice:hover:not(:disabled){border-color:rgba(92,214,176,.5);transform:translateY(-1px)}
+  .choice:hover:not(:disabled){border-color:rgba(14,156,116,.5);transform:translateY(-1px)}
   .choice:disabled{cursor:default}
   .choice .k{width:24px;height:24px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:12px;
-    background:rgba(140,160,220,.14);color:var(--muted)}
-  .choice.correct{border-color:var(--accent);background:rgba(92,214,176,.14)}
+    background:rgba(40,58,84,.14);color:var(--muted)}
+  .choice.correct{border-color:var(--accent);background:rgba(14,156,116,.14)}
   .choice.correct .k{background:var(--accent);color:#062018}
-  .choice.wrong{border-color:var(--area);background:rgba(255,138,91,.12)}
+  .choice.wrong{border-color:var(--area);background:rgba(214,84,38,.12)}
   .choice.wrong .k{background:var(--area);color:#2a1006}
   .fb{margin-top:18px;font-size:14px;line-height:1.5;color:var(--muted);min-height:20px}
   .fb b{color:var(--ink)}
   .row{margin-top:22px;display:flex;justify-content:flex-end;gap:10px}
   .btn{background:var(--accent);color:#062018;font-weight:600;font-size:14.5px;padding:11px 20px;border:0;border-radius:11px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
-  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(92,214,176,.5)}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(14,156,116,.5)}
   .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
   .btn.ghost:hover{color:var(--ink);box-shadow:none}
   .btn[hidden]{display:none}
@@ -82,7 +82,7 @@
 <body>
   <div class="bar">
     <a class="brand" href="index.html">
-      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e1424"/><path d="M5 22 C 10 22, 12 8, 17 8 S 24 18, 27 10" fill="none" stroke="#5cd6b0" stroke-width="2"/><circle cx="17" cy="8" r="2.4" fill="#ffd27a"/></svg>
+      <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#e9eef3"/><path d="M5 22 C 10 22, 12 8, 17 8 S 24 18, 27 10" fill="none" stroke="#0e9c74" stroke-width="2"/><circle cx="17" cy="8" r="2.4" fill="#bf7c0f"/></svg>
       Calculo
     </a>
     <div class="bar-links">
@@ -123,18 +123,37 @@
       var opts=shuffle([{v:correct,c:true}].concat(chosen.map(function(d){return {v:d,c:false};})));
       return {prompt:prompt,choices:opts.map(function(o){return {html:fmt(o.v),correct:o.c};})};
     }
+    function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
+    function frac(a,b){var g=gcd(a,b)||1;return (a<0?'−':'')+(Math.abs(a)/g)+'/'+(Math.abs(b)/g);}
+    var I=function(v){return v;};
     var GEN=[
-      function(){var n=rnd(2,7);return mc('d/dx ( x<sup>'+n+'</sup> ) = ?',term(n,n-1),[term(1,n-1),term(n,n),term(1,n+1)],function(v){return v;});},
-      function(){var n=rnd(2,4),a=rnd(2,5);var correct=n*Math.pow(a,n-1);var cands=[Math.pow(a,n),n*Math.pow(a,n),Math.pow(a,n-1),(n-1)*Math.pow(a,n-2),n*Math.pow(a,n-1)+a];return mc('If f(x)=x<sup>'+n+'</sup>, then f&prime;('+a+') = ?',correct,shuffle(cands));},
-      function(){var combos=[[1,4],[1,6],[1,2],[2,3],[2,6],[3,2],[2,9]];var c=pick(combos),n=c[0],b=c[1];var correct=Math.pow(b,n+1)/(n+1);var cands=[Math.pow(b,n+1),Math.pow(b,n),(n+1)*Math.pow(b,n),Math.pow(b,n+1)/n,correct+b,correct*2].filter(function(v){return Number.isInteger(v);});return mc('&int;<sub>0</sub><sup>'+b+'</sup> x'+(n===1?'':'<sup>'+n+'</sup>')+' dx = ?',correct,shuffle(cands));},
-      function(){var P=[['sin x','cos x'],['cos x','−sin x'],['e<sup>x</sup>','e<sup>x</sup>'],['ln x','1/x'],['tan x','sec<sup>2</sup> x'],['√x','1/(2√x)']];var q=pick(P);var others=P.filter(function(p){return p[1]!==q[1];}).map(function(p){return p[1];});return mc('d/dx ( '+q[0]+' ) = ?',q[1],shuffle(others),function(v){return v;});},
-      function(){var a=rnd(2,5),c2=rnd(1,3),c1=rnd(-3,3),c0=rnd(-4,4);var val=c2*a*a+c1*a+c0;var pp=[term(c2,2)];if(c1!==0)pp.push((c1<0?' − ':' + ')+term(Math.abs(c1),1));if(c0!==0)pp.push((c0<0?' − ':' + ')+Math.abs(c0));var cands=[val+1,val-1,val+a,val-a,c2*a*a-c1*a+c0,2*c2*a+c1];return mc('lim<sub>x&rarr;'+a+'</sub> ( '+pp.join('')+' ) = ?',val,shuffle(cands));},
-      function(){var items=[{q:'d/dx sin(3x) at x=0',a:3,d:[1,0,-3]},{q:'d/dx (2x+1)<sup>3</sup> at x=0',a:6,d:[3,2,1]},{q:'d/dx e<sup>2x</sup> at x=0',a:2,d:[1,0,4]},{q:'d/dx (x<sup>2</sup>+1)<sup>2</sup> at x=1',a:8,d:[4,2,16]},{q:'d/dx cos(2x) at x=0',a:0,d:[2,-2,1]},{q:'d/dx (3x−1)<sup>2</sup> at x=1',a:12,d:[6,4,9]}];var it=pick(items);return mc(it.q+' = ?',it.a,shuffle(it.d.slice()));},
-      function(){var P=[['t<sup>2</sup>+1','x<sup>2</sup>+1',['2x','x<sup>3</sup>/3 + x','x<sup>2</sup>']],['sin t','sin x',['cos x','−cos x','−sin x']],['e<sup>t</sup>','e<sup>x</sup>',['e<sup>x</sup>+1','x e<sup>x</sup>','e<sup>x</sup>/x']],['3t<sup>2</sup>','3x<sup>2</sup>',['6x','x<sup>3</sup>','9x<sup>2</sup>']]];var q=pick(P);return mc('If F(x)=&int;<sub>0</sub><sup>x</sup> '+q[0]+' dt, then F&prime;(x) = ?',q[1],shuffle(q[2].slice()),function(v){return v;});},
-      function(){var b=pick([-8,-6,-4,-2,2,4,6]);var c=rnd(-3,5);var correct=-b/2;var cands=[b/2,-b,b,correct+1,correct-1];var bt=(b<0?' − '+Math.abs(b)+'x':' + '+b+'x');var ct=(c<0?' − '+Math.abs(c):' + '+c);return mc('The critical point of f(x)=x<sup>2</sup>'+bt+ct+' is at x = ?',correct,shuffle(cands));}
+      {topic:'derivatives',gen:function(){var n=rnd(2,7);return mc('d/dx ( x<sup>'+n+'</sup> ) = ?',term(n,n-1),[term(1,n-1),term(n,n),term(1,n+1)],I);}},
+      {topic:'derivatives',gen:function(){var n=rnd(2,4),a=rnd(2,5);var c=n*Math.pow(a,n-1);return mc('If f(x)=x<sup>'+n+'</sup>, then f&prime;('+a+') = ?',c,shuffle([Math.pow(a,n),n*Math.pow(a,n),Math.pow(a,n-1),(n-1)*Math.pow(a,n-2),c+a]));}},
+      {topic:'derivatives',gen:function(){var P=[['sin x','cos x'],['cos x','−sin x'],['e<sup>x</sup>','e<sup>x</sup>'],['ln x','1/x'],['tan x','sec<sup>2</sup> x'],['√x','1/(2√x)']];var q=pick(P);return mc('d/dx ( '+q[0]+' ) = ?',q[1],shuffle(P.filter(function(p){return p[1]!==q[1];}).map(function(p){return p[1];})),I);}},
+      {topic:'derivatives',gen:function(){var items=[['(x+1)(x+2)',1,5],['(x+4)(x−1)',2,7],['(2x)(x+3)',1,10],['(x−2)(x+5)',1,9]];var it=pick(items);return mc('d/dx [ '+it[0]+' ] at x='+it[1]+' = ?',it[2],shuffle([it[2]+1,it[2]-2,it[2]+3,it[2]-1]));}},
+      {topic:'derivatives',gen:function(){var b=rnd(1,4),c=rnd(1,5);var k0=4*b+2*c,slope=4*b+c,cst=k0-2*slope;function ln(s,k){return 'y = '+s+'x '+(k>=0?'+ '+k:'− '+Math.abs(k));}return mc('Tangent line to f(x)='+term(b,2)+' + '+term(c,1)+' at x=2:',ln(slope,cst),shuffle(['y = '+slope+'x',ln(slope-2,cst),ln(slope,-cst)]),I);}},
+      {topic:'chain',gen:function(){var items=[['sin(3x)',0,3,[1,0,-3]],['(2x+1)<sup>3</sup>',0,6,[3,2,1]],['e<sup>2x</sup>',0,2,[1,0,4]],['(x<sup>2</sup>+1)<sup>2</sup>',1,8,[4,2,16]],['cos(2x)',0,0,[2,-2,1]],['(3x−1)<sup>2</sup>',1,12,[6,4,9]]];var it=pick(items);return mc('d/dx '+it[0]+' at x='+it[1]+' = ?',it[2],shuffle(it[3].slice()));}},
+      {topic:'chain',gen:function(){var P=[['sin(x<sup>2</sup>)','2x cos(x<sup>2</sup>)',['cos(x<sup>2</sup>)','2x sin(x<sup>2</sup>)','2 cos(x<sup>2</sup>)']],['(3x+1)<sup>4</sup>','12(3x+1)<sup>3</sup>',['4(3x+1)<sup>3</sup>','3(3x+1)<sup>4</sup>','12(3x+1)<sup>4</sup>']],['e<sup>x²</sup>','2x e<sup>x²</sup>',['e<sup>x²</sup>','2x e<sup>x</sup>','x² e<sup>x²</sup>']]];var q=pick(P);return mc('d/dx '+q[0]+' = ?',q[1],shuffle(q[2].slice()),I);}},
+      {topic:'implicit',gen:function(){var pts=[[3,4],[4,3],[5,12],[12,5],[8,6],[6,8]];var p=pick(pts);var r2=p[0]*p[0]+p[1]*p[1];return mc('On x<sup>2</sup>+y<sup>2</sup>='+r2+', dy/dx at ('+p[0]+', '+p[1]+') = ?',frac(-p[0],p[1]),shuffle([frac(p[0],p[1]),frac(-p[1],p[0]),frac(p[1],p[0])]),I);}},
+      {topic:'limits',gen:function(){var a=rnd(2,5),c2=rnd(1,3),c1=rnd(-3,3),c0=rnd(-4,4);var val=c2*a*a+c1*a+c0;var pp=[term(c2,2)];if(c1!==0)pp.push((c1<0?' − ':' + ')+term(Math.abs(c1),1));if(c0!==0)pp.push((c0<0?' − ':' + ')+Math.abs(c0));return mc('lim<sub>x&rarr;'+a+'</sub> ( '+pp.join('')+' ) = ?',val,shuffle([val+1,val-1,val+a,val-a,2*c2*a+c1]));}},
+      {topic:'limits',gen:function(){var items=[['(3x<sup>2</sup>+1)/(6x<sup>2</sup>+x)','1/2',['2','1/6','0']],['(2x+1)/(x<sup>2</sup>+3)','0',['2','1','∞']],['(x<sup>2</sup>)/(2x<sup>2</sup>−1)','1/2',['2','1','0']],['(5x<sup>3</sup>)/(x<sup>3</sup>+1)','5',['0','∞','1/5']],['(4x+7)/(2x−3)','2',['0','∞','1/2']]];var it=pick(items);return mc('lim<sub>x&rarr;∞</sub> '+it[0]+' = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'lhopital',gen:function(){var items=[['sin x / x','1',['0','∞','−1'],0],['(1−cos x)/x<sup>2</sup>','1/2',['1','0','2'],0],['(e<sup>x</sup>−1)/x','1',['0','e','∞'],0],['tan x / x','1',['0','∞','−1'],0],['(ln x)/x','0',['1','∞','e'],1]];var it=pick(items);var lim=it[3]?'<sub>x&rarr;∞</sub>':'<sub>x&rarr;0</sub>';return mc('lim'+lim+' '+it[0]+' = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'integrals',gen:function(){var combos=[[1,4],[1,6],[1,2],[2,3],[2,6],[3,2],[2,9]];var c=pick(combos),n=c[0],b=c[1];var correct=Math.pow(b,n+1)/(n+1);var cands=[Math.pow(b,n+1),Math.pow(b,n),(n+1)*Math.pow(b,n),correct+b,correct*2].filter(function(v){return Number.isInteger(v);});return mc('&int;<sub>0</sub><sup>'+b+'</sup> x'+(n===1?'':'<sup>'+n+'</sup>')+' dx = ?',correct,shuffle(cands));}},
+      {topic:'integrals',gen:function(){var n=rnd(2,6);return mc('&int; x<sup>'+n+'</sup> dx = ?','x<sup>'+(n+1)+'</sup>/'+(n+1)+' + C',shuffle([term(n,n-1)+' + C','x<sup>'+(n+1)+'</sup> + C',(n+1)+'x<sup>'+n+'</sup> + C']),I);}},
+      {topic:'integrals',gen:function(){var items=[['&int;<sub>0</sub><sup>π</sup> sin x dx','2',['0','1','π']],['&int;<sub>0</sub><sup>π/2</sup> cos x dx','1',['0','π/2','2']],['&int;<sub>0</sub><sup>1</sup> e<sup>x</sup> dx','e − 1',['e','1','e + 1']],['&int;<sub>1</sub><sup>e</sup> (1/x) dx','1',['e','0','e − 1']]];var it=pick(items);return mc(it[0]+' = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'ftc',gen:function(){var P=[['t<sup>2</sup>+1','x<sup>2</sup>+1',['2x','x<sup>3</sup>/3 + x','x<sup>2</sup>']],['sin t','sin x',['cos x','−cos x','−sin x']],['e<sup>t</sup>','e<sup>x</sup>',['e<sup>x</sup>+1','x e<sup>x</sup>','e<sup>x</sup>/x']],['3t<sup>2</sup>','3x<sup>2</sup>',['6x','x<sup>3</sup>','9x<sup>2</sup>']]];var q=pick(P);return mc('If F(x)=&int;<sub>0</sub><sup>x</sup> '+q[0]+' dt, then F&prime;(x) = ?',q[1],shuffle(q[2].slice()),I);}},
+      {topic:'optimization',gen:function(){var b=pick([-8,-6,-4,-2,2,4,6]),c=rnd(-3,5),correct=-b/2;var bt=(b<0?' − '+Math.abs(b)+'x':' + '+b+'x'),ct=(c<0?' − '+Math.abs(c):' + '+c);return mc('The critical point of f(x)=x<sup>2</sup>'+bt+ct+' is at x = ?',correct,shuffle([b/2,-b,b,correct+1,correct-1]));}},
+      {topic:'related_rates',gen:function(){var r=rnd(2,5),dr=rnd(1,3);var v=2*r*dr;return mc('A circle has area A=πr². If r='+r+' and dr/dt='+dr+', then dA/dt = ?',v+'π',shuffle([(r*r)+'π',(r*dr)+'π',(4*r*dr)+'π']),I);}},
+      {topic:'newton',gen:function(){var items=[['x<sup>2</sup>−2',2,'1.5'],['x<sup>2</sup>−3',2,'1.75'],['x<sup>2</sup>−5',2,'2.25'],['x<sup>2</sup>−6',5,'3.1']];var it=pick(items);return mc('Newton on f(x)='+it[0]+' from x₀='+it[1]+': x₁ = ?',it[2],shuffle([it[1]+'', (it[1]-1)+'', (it[1]+1)+'', '2.0']),I);}},
+      {topic:'series',gen:function(){var items=[['Σ (1/2)<sup>n</sup>','2',['1','1/2','∞']],['Σ (1/3)<sup>n</sup>','3/2',['3','1/3','2']],['Σ 3·(1/2)<sup>n</sup>','6',['3','2','∞']],['Σ (2/3)<sup>n</sup>','3',['2/3','2','∞']],['Σ (1/4)<sup>n</sup>','4/3',['4','1/4','2']]];var it=pick(items);return mc(it[0]+' &nbsp;(n from 0 to ∞) = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'series',gen:function(){var conv=['Σ 1/n<sup>2</sup>','Σ 1/n<sup>3</sup>','Σ (1/2)<sup>n</sup>','Σ (2/3)<sup>n</sup>'];var div=['Σ 1/n','Σ 1/√n','Σ 2<sup>n</sup>','Σ n','Σ (5/4)<sup>n</sup>'];return mc('Which series <b>converges</b>?',pick(conv),shuffle(div).slice(0,3),I);}},
+      {topic:'improper',gen:function(){var items=[['&int;<sub>1</sub><sup>∞</sup> x<sup>−2</sup> dx','1',['∞','1/2','2']],['&int;<sub>1</sub><sup>∞</sup> x<sup>−3</sup> dx','1/2',['1','∞','1/3']],['&int;<sub>0</sub><sup>1</sup> x<sup>−1/2</sup> dx','2',['1','∞','1/2']]];var it=pick(items);return mc(it[0]+' = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'volume',gen:function(){var items=[['y=√x on [0,4]','8π',['4π','16π','2π']],['y=x on [0,3]','9π',['3π','27π','6π']],['y=x on [0,2]','8π/3',['4π','2π','8π']]];var it=pick(items);return mc('Disk volume, '+it[0]+' about the x-axis = ?',it[1],shuffle(it[2].slice()),I);}},
+      {topic:'average',gen:function(){var items=[['x<sup>2</sup>','[0,3]','3',['9','1','6']],['x','[0,4]','2',['4','8','1']],['x<sup>2</sup>','[0,6]','12',['6','36','18']]];var it=pick(items);return mc('Average value of '+it[0]+' on '+it[1]+' = ?',it[2],shuffle(it[3].slice()),I);}},
+      {topic:'parametric',gen:function(){var items=[['x=t<sup>2</sup>, y=t<sup>3</sup>',2,3],['x=t<sup>2</sup>, y=t<sup>3</sup>',4,6],['x=t, y=t<sup>2</sup>',3,6],['x=2t, y=t<sup>2</sup>',2,2]];var it=pick(items);return mc('For '+it[0]+', dy/dx at t='+it[1]+' = ?',it[2],shuffle([it[1],it[2]+1,it[2]-2,1]));}}
     ];
-    function makeQ(){for(var t=0;t<12;t++){var q=pick(GEN)();if(q)return q;}return null;}
-    function makeQuiz(n){var out=[],seen={},g=0;while(out.length<n&&g++<400){var q=makeQ();if(!q||seen[q.prompt])continue;seen[q.prompt]=1;out.push(q);}return out;}
+    function makeQ(){for(var t=0;t<15;t++){var g=pick(GEN);var q=g.gen();if(q){q.topic=g.topic;return q;}}return null;}
+    function makeQuiz(n){var out=[],seen={},g=0;while(out.length<n&&g++<600){var q=makeQ();if(!q||seen[q.prompt])continue;seen[q.prompt]=1;out.push(q);}return out;}
 
     var card=document.getElementById('card');
     var quiz, idx, score, answered;

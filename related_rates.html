@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A ladder slides down a wall at a steady speed — but the top races away faster and faster. Related rates: when one quantity changes, the chain rule fixes how fast the others must move.">
-<meta name="theme-color" content="#0a0e18">
+<meta name="theme-color" content="#ffffff">
 <title>Related Rates &middot; Calculo</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Calculo">
@@ -25,18 +25,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-0:#0a0e18; --bg-1:#101529; --panel:rgba(24,30,52,0.6); --line:rgba(140,160,220,0.16);
-    --ink:#eef1fb; --muted:#9aa6cc; --faint:#69739b;
-    --accent:#5cd6b0;      /* the ladder */
-    --xr:#ffd27a;          /* horizontal quantity */
-    --yr:#ff8a5b;          /* vertical quantity */
+    --bg-0:#ffffff; --bg-1:#f2f5f8; --panel:rgba(255,255,255,0.6); --line:rgba(40,58,84,0.16);
+    --ink:#1b2430; --muted:#59626f; --faint:#8a92a0;
+    --accent:#0e9c74;      /* the ladder */
+    --xr:#bf7c0f;          /* horizontal quantity */
+    --yr:#d65426;          /* vertical quantity */
     --r:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
   body{background:
-      radial-gradient(1100px 640px at 82% -10%, rgba(92,214,176,0.09), transparent 60%),
-      radial-gradient(820px 560px at -8% 8%, rgba(255,138,91,0.07), transparent 55%),
+      radial-gradient(1100px 640px at 82% -10%, rgba(14,156,116,0.09), transparent 60%),
+      radial-gradient(820px 560px at -8% 8%, rgba(214,84,38,0.07), transparent 55%),
       linear-gradient(160deg,var(--bg-0),var(--bg-1));
     background-attachment:fixed; min-height:100vh; color:var(--ink);
     font-family:'Inter',system-ui,sans-serif;}
@@ -59,22 +59,22 @@
   .plabel.mt{margin-top:22px}
 
   .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
+  .seg button{background:rgba(255,255,255,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;
     padding:9px 8px;font:500 12.5px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center}
-  .seg button:hover{border-color:rgba(92,214,176,.5);color:var(--ink)}
-  .seg button.on{background:rgba(92,214,176,.14);border-color:var(--accent);color:var(--ink)}
+  .seg button:hover{border-color:rgba(14,156,116,.5);color:var(--ink)}
+  .seg button.on{background:rgba(14,156,116,.14);border-color:var(--accent);color:var(--ink)}
 
   .ctl{margin-top:16px}
   .ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
   .ctl .row label{font-size:13px;color:var(--muted)}
   .ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
-  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--accent)}
-  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #0a0e18}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(40,58,84,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #ffffff;box-shadow:0 0 0 1px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #ffffff}
 
-  .animbtn{margin-top:14px;width:100%;background:rgba(92,214,176,.14);border:1px solid var(--accent);color:var(--ink);
+  .animbtn{margin-top:14px;width:100%;background:rgba(14,156,116,.14);border:1px solid var(--accent);color:var(--ink);
     border-radius:10px;padding:11px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:.14s}
-  .animbtn:hover{background:rgba(92,214,176,.24)}
+  .animbtn:hover{background:rgba(14,156,116,.24)}
 
   .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
   .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -191,11 +191,11 @@
 
   function drawLadder(){
     // ground + wall
-    ctx.strokeStyle = "rgba(180,196,240,0.5)"; ctx.lineWidth = 2*DPR;
+    ctx.strokeStyle = "rgba(40,58,84,0.5)"; ctx.lineWidth = 2*DPR;
     ctx.beginPath(); ctx.moveTo(sx(-0.5), sy(0)); ctx.lineTo(sx(VIEW.xmax), sy(0));      // ground
     ctx.moveTo(sx(0), sy(-0.5)); ctx.lineTo(sx(0), sy(VIEW.ymax)); ctx.stroke();          // wall
     // grid ticks
-    ctx.fillStyle = "rgba(150,166,204,0.6)"; ctx.font = (12.5*DPR)+"px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "rgba(92,104,122,0.6)"; ctx.font = (12.5*DPR)+"px 'JetBrains Mono', monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "top";
     for(var gx=1; gx<VIEW.xmax; gx++) ctx.fillText(gx, sx(gx), sy(0)+6);
     ctx.textAlign = "right"; ctx.textBaseline = "middle";
@@ -205,7 +205,7 @@
 
     // right-triangle fill
     ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(x), sy(0)); ctx.lineTo(sx(0), sy(y)); ctx.closePath();
-    ctx.fillStyle = "rgba(92,214,176,0.07)"; ctx.fill();
+    ctx.fillStyle = "rgba(14,156,116,0.07)"; ctx.fill();
 
     // x leg (foot) and y leg (height)
     ctx.strokeStyle = getCss('--xr'); ctx.lineWidth = 4*DPR;
@@ -242,12 +242,12 @@
     // concentric faint rings (history)
     for(var k=1;k<=4;k++){
       var rr = r * k/4;
-      ctx.strokeStyle = "rgba(92,214,176," + (0.12*k) + ")"; ctx.lineWidth = 1.5*DPR;
+      ctx.strokeStyle = "rgba(14,156,116," + (0.12*k) + ")"; ctx.lineWidth = 1.5*DPR;
       ctx.beginPath(); ctx.ellipse(sx(0), sy(0), rr*unit(), rr*unit(), 0, 0, Math.PI*2); ctx.stroke();
     }
     // filled disk
     ctx.beginPath(); ctx.ellipse(sx(0), sy(0), r*unit(), r*unit(), 0, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(92,214,176,0.10)"; ctx.fill();
+    ctx.fillStyle = "rgba(14,156,116,0.10)"; ctx.fill();
     ctx.strokeStyle = getCss('--accent'); ctx.lineWidth = 4*DPR; ctx.stroke();
     // radius arrow
     ctx.strokeStyle = getCss('--xr'); ctx.lineWidth = 4*DPR;
@@ -269,8 +269,8 @@
     ctx.closePath(); ctx.fill();
   }
   function dot(x,y,fill){ ctx.beginPath(); ctx.arc(sx(x), sy(y), 6*DPR, 0, Math.PI*2); ctx.fillStyle = fill; ctx.fill();
-    ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(10,14,26,0.7)"; ctx.stroke(); }
-  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#5cd6b0"; }
+    ctx.lineWidth = 2*DPR; ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.stroke(); }
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#0e9c74"; }
 
   function fmt(v, d){ if(!isFinite(v)) return "—"; d=(d==null?3:d); return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
 

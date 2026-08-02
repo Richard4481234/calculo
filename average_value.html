@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="The average value of a function is the height of the rectangle with the same area under it. And the Mean Value Theorem for Integrals guarantees the curve actually hits that height somewhere.">
-<meta name="theme-color" content="#0a0e18">
+<meta name="theme-color" content="#ffffff">
 <title>Average Value &middot; Calculo</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Calculo">
@@ -23,9 +23,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg-0:#0a0e18;--bg-1:#101529;--panel:rgba(24,30,52,0.6);--line:rgba(140,160,220,0.16);--ink:#eef1fb;--muted:#9aa6cc;--faint:#69739b;--accent:#5cd6b0;--avg:#ffd27a;--rect:#ff8a5b;--c:#b89bff;--r:16px;}
+  :root{--bg-0:#ffffff;--bg-1:#f2f5f8;--panel:rgba(255,255,255,0.6);--line:rgba(40,58,84,0.16);--ink:#1b2430;--muted:#59626f;--faint:#8a92a0;--accent:#0e9c74;--avg:#bf7c0f;--rect:#d65426;--c:#6c46d6;--r:16px;}
   *{box-sizing:border-box}html,body{margin:0}
-  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(255,210,122,0.08),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(92,214,176,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
+  body{background:radial-gradient(1100px 640px at 82% -10%,rgba(191,124,15,0.08),transparent 60%),radial-gradient(820px 560px at -8% 8%,rgba(14,156,116,0.08),transparent 55%),linear-gradient(160deg,var(--bg-0),var(--bg-1));background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
   a{color:inherit;text-decoration:none}
   .head{max-width:1220px;margin:0 auto;padding:22px 26px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .back{font-size:13px;color:var(--muted)}.back:hover{color:var(--ink)}
@@ -38,14 +38,14 @@
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
   .plabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 11px}
   .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .seg button{background:rgba(10,14,26,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font:500 13px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;gap:6px}
-  .seg button:hover{border-color:rgba(255,210,122,.5);color:var(--ink)}.seg button.on{background:rgba(255,210,122,.12);border-color:var(--avg);color:var(--ink)}
+  .seg button{background:rgba(255,255,255,.55);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 8px;font:500 13px 'Inter',sans-serif;cursor:pointer;transition:.14s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .seg button:hover{border-color:rgba(191,124,15,.5);color:var(--ink)}.seg button.on{background:rgba(191,124,15,.12);border-color:var(--avg);color:var(--ink)}
   .seg button .fx{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:15px}
   .ctl{margin-top:16px}.ctl .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
   .ctl .row label{font-size:13px;color:var(--muted)}.ctl .row .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
-  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(140,160,220,.22);outline:none}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--avg);cursor:pointer;border:2px solid #0a0e18;box-shadow:0 0 0 1px var(--avg)}
-  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--avg);cursor:pointer;border:2px solid #0a0e18}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(40,58,84,.22);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--avg);cursor:pointer;border:2px solid #ffffff;box-shadow:0 0 0 1px var(--avg)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--avg);cursor:pointer;border:2px solid #ffffff}
   .readout{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
   .readout .r .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
   .readout .r .v{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);margin-top:3px}
@@ -88,7 +88,7 @@
     <div class="graphwrap">
       <canvas id="cv" width="1720" height="1040"></canvas>
       <div class="tip">the gold rectangle and the shaded area are equal</div>
-      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> &fnof;(x)</span><span class="li"><span class="ln" style="border-color:var(--avg)"></span> average &fnof;&#772;</span><span class="li"><span class="sw" style="background:rgba(255,138,91,0.14)"></span> equal-area rectangle</span><span class="li"><span class="dt" style="background:var(--c)"></span> point c</span></div>
+      <div class="legend"><span class="li"><span class="ln" style="border-color:var(--accent)"></span> &fnof;(x)</span><span class="li"><span class="ln" style="border-color:var(--avg)"></span> average &fnof;&#772;</span><span class="li"><span class="sw" style="background:rgba(214,84,38,0.14)"></span> equal-area rectangle</span><span class="li"><span class="dt" style="background:var(--c)"></span> point c</span></div>
     </div>
   </div>
 <script>
@@ -116,31 +116,31 @@
     computeView();ctx.clearRect(0,0,W,H);var lo=Math.min(a,b),hi=Math.max(a,b);
     var area=integ(lo,hi),avg=area/(hi-lo);
     // grid axes
-    ctx.lineWidth=1*DPR;ctx.strokeStyle="rgba(140,160,220,0.08)";ctx.beginPath();
+    ctx.lineWidth=1*DPR;ctx.strokeStyle="rgba(40,58,84,0.08)";ctx.beginPath();
     for(var gx=Math.ceil(VIEW.xmin);gx<=VIEW.xmax;gx++){ctx.moveTo(sx(gx),0);ctx.lineTo(sx(gx),H);}
     for(var gy=Math.ceil(VIEW.ymin);gy<=VIEW.ymax;gy++){ctx.moveTo(0,sy(gy));ctx.lineTo(W,sy(gy));}ctx.stroke();
     // equal-area rectangle
-    ctx.fillStyle="rgba(255,138,91,0.14)";ctx.fillRect(sx(lo),sy(avg),sx(hi)-sx(lo),sy(0)-sy(avg));
-    ctx.strokeStyle="rgba(255,138,91,0.5)";ctx.lineWidth=1.4*DPR;ctx.strokeRect(sx(lo),sy(avg),sx(hi)-sx(lo),sy(0)-sy(avg));
+    ctx.fillStyle="rgba(214,84,38,0.14)";ctx.fillRect(sx(lo),sy(avg),sx(hi)-sx(lo),sy(0)-sy(avg));
+    ctx.strokeStyle="rgba(214,84,38,0.5)";ctx.lineWidth=1.4*DPR;ctx.strokeRect(sx(lo),sy(avg),sx(hi)-sx(lo),sy(0)-sy(avg));
     // area under curve (outline fill)
     ctx.beginPath();var started=false;for(var i=0;i<=400;i++){var x=lo+(hi-lo)*i/400,y=f(x);if(!isFinite(y))continue;if(!started){ctx.moveTo(sx(x),sy(0));ctx.lineTo(sx(x),sy(y));started=true;}else ctx.lineTo(sx(x),sy(y));}
-    if(started){ctx.lineTo(sx(hi),sy(0));ctx.closePath();ctx.fillStyle="rgba(92,214,176,0.12)";ctx.fill();}
+    if(started){ctx.lineTo(sx(hi),sy(0));ctx.closePath();ctx.fillStyle="rgba(14,156,116,0.12)";ctx.fill();}
     // axes
-    ctx.strokeStyle="rgba(180,196,240,0.4)";ctx.lineWidth=1.4*DPR;ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(W,sy(0));if(sx(0)>=0&&sx(0)<=W){ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),H);}ctx.stroke();
-    ctx.fillStyle="rgba(150,166,204,0.7)";ctx.font=(13*DPR)+"px 'JetBrains Mono', monospace";ctx.textAlign="center";ctx.textBaseline="top";
+    ctx.strokeStyle="rgba(40,58,84,0.4)";ctx.lineWidth=1.4*DPR;ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(W,sy(0));if(sx(0)>=0&&sx(0)<=W){ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),H);}ctx.stroke();
+    ctx.fillStyle="rgba(92,104,122,0.7)";ctx.font=(13*DPR)+"px 'JetBrains Mono', monospace";ctx.textAlign="center";ctx.textBaseline="top";
     for(var tx=Math.ceil(VIEW.xmin);tx<=VIEW.xmax;tx++){if(tx!==0)ctx.fillText(tx,sx(tx),sy(0)+6);}
     // average line
     ctx.strokeStyle=getCss('--avg');ctx.lineWidth=2.2*DPR;ctx.setLineDash([7*DPR,5*DPR]);ctx.beginPath();ctx.moveTo(sx(lo),sy(avg));ctx.lineTo(sx(hi),sy(avg));ctx.stroke();ctx.setLineDash([]);
     // curve
     plot(function(x){return FNS[fi].dom(x)?f(x):NaN;},getCss('--accent'),3.0);
     // c points
-    findC(lo,hi,avg).forEach(function(c){dot(c,f(c),getCss('--c'));ctx.strokeStyle="rgba(184,155,255,0.4)";ctx.lineWidth=1.2*DPR;ctx.setLineDash([3*DPR,4*DPR]);ctx.beginPath();ctx.moveTo(sx(c),sy(f(c)));ctx.lineTo(sx(c),sy(0));ctx.stroke();ctx.setLineDash([]);});
+    findC(lo,hi,avg).forEach(function(c){dot(c,f(c),getCss('--c'));ctx.strokeStyle="rgba(108,70,214,0.4)";ctx.lineWidth=1.2*DPR;ctx.setLineDash([3*DPR,4*DPR]);ctx.beginPath();ctx.moveTo(sx(c),sy(f(c)));ctx.lineTo(sx(c),sy(0));ctx.stroke();ctx.setLineDash([]);});
     // boundaries
     [lo,hi].forEach(function(bx){ctx.strokeStyle="rgba(255,255,255,0.16)";ctx.lineWidth=1.2*DPR;ctx.setLineDash([4*DPR,4*DPR]);ctx.beginPath();ctx.moveTo(sx(bx),0);ctx.lineTo(sx(bx),H);ctx.stroke();ctx.setLineDash([]);});
   }
   function plot(g,color,lw){ctx.strokeStyle=color;ctx.lineWidth=lw*DPR;ctx.lineJoin="round";ctx.beginPath();var N=1000,pen=false,prevY=null;for(var i=0;i<=N;i++){var x=VIEW.xmin+(VIEW.xmax-VIEW.xmin)*i/N,y=g(x);if(!isFinite(y)||Math.abs(y)>1e5){pen=false;continue;}var py=sy(y);if(pen&&prevY!==null&&Math.abs(py-prevY)>H*1.3)pen=false;if(!pen){ctx.moveTo(sx(x),py);pen=true;}else ctx.lineTo(sx(x),py);prevY=py;}ctx.stroke();}
-  function dot(x,y,fill){if(!isFinite(y))return;ctx.beginPath();ctx.arc(sx(x),sy(y),6*DPR,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();ctx.lineWidth=2*DPR;ctx.strokeStyle="rgba(10,14,26,0.7)";ctx.stroke();}
-  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#5cd6b0";}
+  function dot(x,y,fill){if(!isFinite(y))return;ctx.beginPath();ctx.arc(sx(x),sy(y),6*DPR,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();ctx.lineWidth=2*DPR;ctx.strokeStyle="rgba(255,255,255,0.7)";ctx.stroke();}
+  function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#0e9c74";}
   function fmt(v,d){if(!isFinite(v))return "—";d=(d==null?3:d);if(Math.abs(v)<5e-4)v=0;return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
   function refresh(){
     if(FNS[fi].dom(0)===false){if(a<0){a=0;}if(b<0.1){b=0.1;}}
